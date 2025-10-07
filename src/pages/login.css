@@ -1,0 +1,199 @@
+/* ===== Theme tokens (minimal, rem-based) ===== */
+:root {
+  --km-bg-soft: #f8e6cc;
+  --km-surface: #ffffff;
+  --km-text: #171717;
+  --km-muted: #6f6f6f;
+  --km-border: #e8e8e8;
+  --km-brand: #e69525;
+
+  --km-radius: 1rem;
+  --km-radius-sm: .75rem;
+  --km-pill: 999rem;
+
+  --km-card-w: 30rem;
+  --km-input-h: 2.75rem;
+  --km-btn-h: 2.75rem;
+  --km-pad: clamp(1rem, 4vw, 2.5rem);
+}
+
+/* ===== Base / Mobile-first ===== */
+.km-login-wrap {
+  width: 100%;
+  min-height: calc(100dvh - 4rem);
+
+  background: var(--km-bg-soft);
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding-inline: clamp(0.75rem, 4vw, 2.5rem);
+  padding-block: clamp(1rem, 6vh, 2.5rem);
+
+  box-sizing: border-box;
+}
+
+.km-login-card {
+  width: min(var(--km-card-w), 100%);
+  background: var(--km-surface);
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius);
+  padding: clamp(1rem, 3.5vw, 1.75rem);
+  box-shadow: 0 10px 28px rgba(0,0,0,.06);
+  margin-top: clamp(.5rem, 6vh, 2rem);
+}
+
+.km-login-title {
+  margin: 0 0 1rem;
+  font-size: clamp(1.125rem, 2.4vw, 1.375rem); /* 18→22px */
+  font-weight: 800;
+  text-align: center;
+  color: var(--km-text);
+}
+
+.km-form { display: grid; gap: .875rem; }
+
+.km-field { display: grid; gap: .375rem; }
+.km-label { font-weight: 700; font-size: .875rem; color: var(--km-text); }
+
+/* Inputs */
+.km-input {
+  height: var(--km-input-h);
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-radius-sm);
+  padding: 0 0.875rem;
+  outline: none;
+  font-size: 1rem;
+  background: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--km-text);
+}
+.km-input::placeholder { color: #a2a2a2; }
+.km-input:focus {
+  border-color: color-mix(in srgb, var(--km-brand) 55%, #fff);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--km-brand) 20%, transparent);
+}
+
+/* Password input with append button */
+.km-input-group {
+  position: relative;
+  display: grid;
+}
+.km-input--pw { padding-right: 4.25rem; }
+.km-input-append {
+  position: absolute;
+  right: .375rem;
+  top: 50%;
+  transform: translateY(-50%);
+  height: calc(var(--km-input-h) - .5rem);
+  padding: 0 .875rem;
+  border: 1px solid var(--km-border);
+  border-radius: var(--km-pill);
+  background: #fff;
+  color: var(--km-muted);
+  font-weight: 600;
+  font-size: .875rem;
+  cursor: pointer;
+}
+.km-input-append:hover { background: #fafafa; }
+.km-input-append:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--km-brand) 30%, transparent);
+  outline-offset: 2px;
+}
+
+/* Links row */
+.km-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -.125rem;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+.km-link {
+  color: #8a4d00;
+  text-decoration: none;
+  font-size: .8125rem; /* 13px */
+  font-weight: 600;
+}
+.km-link:hover { text-decoration: underline; }
+
+/* Buttons */
+.km-btn {
+  height: var(--km-btn-h);
+  border-radius: var(--km-pill);
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  width: auto;
+  box-sizing: border-box;
+  font-size: 1rem;
+  color: var(--km-text);
+  background: transparent;
+  transition: background-color .15s ease, box-shadow .15s ease, transform .1s ease;
+}
+.km-btn--full { width: 100%; }
+
+.km-btn--brand {
+  background: var(--km-brand);
+  color: #fff;
+}
+.km-btn--brand:hover { filter: brightness(.97); }
+
+.km-btn--minimal {
+  border: 1px solid var(--km-border);
+  background: #fff;
+  color: var(--km-text);
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+.km-btn--minimal:hover {
+  background: #fafafa;
+  box-shadow: 0 6px 20px rgba(0,0,0,.06);
+}
+.km-btn--minimal:active { transform: translateY(1px); }
+
+/* Divider */
+.km-divider {
+  position: relative;
+  text-align: center;
+  margin: .875rem 0;
+  color: #989898;
+  font-size: .8125rem;
+}
+.km-divider::before,
+.km-divider::after {
+  content: "";
+  height: 1px; background: var(--km-border);
+  position: absolute; top: 50%;
+  width: 40%;
+}
+.km-divider::before { left: 0; }
+.km-divider::after { right: 0; }
+
+/* ===== Breakpoints ===== */
+@media (min-width: 48rem) {           /* ≥768px */
+  .km-login-card { border-radius: var(--km-radius); }
+  :root { --km-input-h: 2.875rem; --km-btn-h: 2.875rem; }
+}
+
+@media (min-width: 64rem) {           /* ≥1024px */
+  .km-login-wrap { padding: 2.5rem 1.25rem; }
+  .km-login-card { padding: 1.75rem; }
+}
+
+/* ≤380px: มือถือเล็กมาก */
+@media (max-width: 23.75rem) {
+  .km-links { flex-direction: column; align-items: flex-start; gap: .375rem; }
+  .km-btn { font-size: .9375rem; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .km-btn, .km-input-append { transition: none; }
+}

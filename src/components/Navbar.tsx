@@ -104,7 +104,7 @@ export default function Navbar() {
                   className="km-dropdown__item"
                   role="menuitem"
                   onClick={async () => {
-                    await signOut();      // TODO(BE): implement real logout
+                    await signOut();
                     setOpen(false);
                   }}
                 >

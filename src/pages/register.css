@@ -1,140 +1,211 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  background-color: #f7d9bc;
-  font-family: 'Prompt', sans-serif;
-  box-sizing: border-box;
-}
-*, *::before, *::after { box-sizing: inherit; }
+/* ===== Theme tokens (inherit from login.css if present) ===== */
+:root{
+  /* map rg-* -> km-* เพื่อให้ธีมสองหน้าตรงกัน */
+  --rg-bg:       var(--km-bg-soft, #f8e6cc);
+  --rg-surface:  var(--km-surface, #ffffff);
+  --rg-text:     var(--km-text, #171717);
+  --rg-muted:    var(--km-muted, #6f6f6f);
+  --rg-border:   var(--km-border, #e8e8e8);
+  --rg-brand:    var(--km-brand, #e69525);
 
-/* ===== หน้า Register กลางจอ ===== */
-.register-page {
-  position: fixed;
-  inset: 0;                
+  --rg-radius:    var(--km-radius, 1rem);
+  --rg-radius-sm: var(--km-radius-sm, .75rem);
+  --rg-pill:      var(--km-pill, 999rem);
+
+  --rg-card-w: var(--km-card-w, 50rem);
+  --rg-input-h: var(--km-input-h, 2.75rem);
+  --rg-btn-h:   var(--km-btn-h, 2.75rem);
+}
+
+/* ===== Base / Layout (match .km-login-wrap) ===== */
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--rg-bg);
+  color: var(--rg-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.register-page{
+  width: 100%;
+  min-height: calc(100dvh - 4rem);
+  background: var(--rg-bg);
+
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: #f7d9bc;
+  align-items: flex-start;
+
+  padding-inline: clamp(.75rem, 4vw, 2.5rem);
+  padding-block: clamp(1rem, 6vh, 2.5rem);
+  box-sizing: border-box;
+
+  /* กันกรณี parent เป็น grid */
+  grid-column: 1 / -1;
 }
 
-/*ครอบโลโก้ + กล่องฟอร์ม */
-.register-shell {
+/* header/logo เหมือนหน้า login */
+.register-shell{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;                 
+  gap: 18px;
 }
-
-/* โลโก้ด้านบน */
-.register-logo {
-  width: 220px;
+.register-logo{
+  width: clamp(10rem, 18vw, 13.75rem);
   height: auto;
   object-fit: contain;
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,.04));
+  opacity: .98;
 }
 
-/* ===== กล่องฟอร์ม ===== */
-.register-container {
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  padding: 40px 50px;
-  width: 420px;             
-  max-width: 92vw;
-  text-align: center;        
+/* ===== Card ===== */
+.register-container{
+  width: clamp(22rem, 92vw, 44rem);
+  background: var(--rg-surface);
+  border: 1px solid var(--rg-border);
+  border-radius: var(--rg-radius);
+  padding: clamp(1rem, 3.5vw, 1.75rem);
+  box-shadow: 0 10px 28px rgba(0,0,0,.06);
+  margin-top: clamp(.5rem, 6vh, 2rem);
+  text-align: center;
 }
 
-/* ===== หัวข้อ ===== */
-.register-container h2 {
-  font-size: 22px;
-  margin-bottom: 25px;
-  font-weight: bold;
-  color: #333;
+/* Title (match .km-login-title) */
+.register-container h2{
+  margin: 0 0 1rem;
+  font-size: clamp(1.125rem, 2.4vw, 1.375rem);
+  font-weight: 800;
+  color: var(--rg-text);
 }
 
-/* ===== ฟิลด์กรอกข้อมูล ===== */
-.reg-field {
-  text-align: left;         
-  margin-bottom: 18px;
+/* ===== Form grid (match .km-form) ===== */
+.register-container form{ display: grid; gap: .875rem; }
+
+/* Field (match .km-field / .km-label) */
+.reg-field{ display: grid; gap: .375rem; text-align: left; }
+.reg-field label{
+  font-weight: 700;
+  font-size: .875rem;
+  color: var(--rg-text);
 }
 
-.reg-field label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #333;
-}
-
-.reg-field input {
+/* Inputs (match .km-input) */
+.reg-field input{
+  height: var(--rg-input-h);
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
+  border: 1px solid var(--rg-border);
+  border-radius: var(--rg-radius-sm);
+  padding: 0 .875rem;
   outline: none;
-  transition: all 0.2s ease;
+  font-size: 1rem;
   background: #fff;
+  box-sizing: border-box;
+  color: var(--rg-text);
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .2s ease;
+}
+.reg-field input::placeholder{ color:#a2a2a2; }
+.reg-field input:focus{
+  border-color: color-mix(in srgb, var(--rg-brand) 55%, #fff);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--rg-brand) 20%, transparent);
 }
 
-.reg-field input:focus {
-  border-color: #f7931a;
-  box-shadow: 0 0 4px rgba(247, 147, 26, 0.4);
-}
-
-/* ===== กล่องรหัสผ่าน + ไอคอนตา ===== */
-.password-wrapper {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.password-wrapper input {
-  width: 100%;
-  padding: 10px 40px 10px 12px;
-}
-
-/* ไอคอนตา (เปิด/ปิดรหัส) */
-.toggle-password {
+/* Password group (match .km-input-group / .km-input-append) */
+.password-wrapper{ position: relative; display: grid; }
+.password-wrapper input{ padding-right: 4.25rem; }
+.toggle-password{
   position: absolute;
-  right: 12px;
+  right: .375rem;
   top: 50%;
   transform: translateY(-50%);
+  height: calc(var(--rg-input-h) - .5rem);
+  padding: 0 .875rem;
+  border: 1px solid var(--rg-border);
+  border-radius: var(--rg-pill);
+  background: #fff;
+  color: var(--rg-muted);
+  font-weight: 600;
+  font-size: .875rem;
   cursor: pointer;
-  font-size: 18px;
-  color: #888;
-  user-select: none;
-  transition: color 0.2s ease, transform 0.2s ease;
 }
-.toggle-password:hover {
-  color: #f7931a;
-  transform: translateY(-50%) scale(1.15);
+.toggle-password:hover { background: #fafafa; }
+.toggle-password:focus-visible{
+  outline: 3px solid color-mix(in srgb, var(--rg-brand) 30%, transparent);
+  outline-offset: 2px;
 }
 
-/* ===== ปุ่มสร้างบัญชี ===== */
-.reg-submit {
+/* ===== Submit button (match .km-btn .km-btn--brand .km-btn--full) ===== */
+.reg-submit{
+  height: var(--rg-btn-h);
   width: 100%;
-  background-color: #f7931a;
-  color: #fff;
-  font-weight: bold;
-  padding: 12px;
-  border: none;
-  border-radius: 25px;
+  border-radius: var(--rg-pill);
+  border: 0;
   cursor: pointer;
-  margin-top: 10px;
-  transition: all 0.3s ease;
+
+  font-weight: 700;
+  font-size: 1rem;
+  color: #fff;
+  background: var(--rg-brand);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 0 0 rgba(0,0,0,0), inset 0 2px 0 rgba(0,0,0,.08);
+  transition: background-color .15s ease, box-shadow .15s ease, transform .1s ease;
 }
-.reg-submit:hover {
-  background-color: #e08517;
+.reg-submit:hover { filter: brightness(.97); }
+.reg-submit:active { transform: translateY(1px); }
+
+/* ===== Optional: divider/links ให้หน้าคล้าย login ถ้ามีใช้ในอนาคต ===== */
+.register-divider{
+  position: relative;
+  text-align: center;
+  margin: .875rem 0;
+  color: #989898;
+  font-size: .8125rem;
+}
+.register-divider::before,
+.register-divider::after{
+  content: "";
+  height: 1px; background: var(--rg-border);
+  position: absolute; top: 50%;
+  width: 40%;
+}
+.register-divider::before{ left: 0; }
+.register-divider::after{ right: 0; }
+
+.register-links{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: -.125rem;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+.register-link{
+  color: #8a4d00;
+  text-decoration: none;
+  font-size: .8125rem;
+  font-weight: 600;
+}
+.register-link:hover{ text-decoration: underline; }
+
+/* ===== Breakpoints (เหมือน login.css) ===== */
+@media (min-width: 48rem){ /* ≥768px */
+  .register-container{ border-radius: var(--rg-radius); }
+  :root{ --rg-input-h: 2.875rem; --rg-btn-h: 2.875rem; }
+}
+@media (min-width: 64rem){ /* ≥1024px */
+  .register-page{ padding: 2.5rem 1.25rem; }
+  .register-container{ padding: 1.75rem; }
+}
+@media (max-width: 23.75rem){ /* ≤380px */
+  .register-links{ flex-direction: column; align-items: flex-start; gap: .375rem; }
+  .reg-submit{ font-size: .9375rem; }
 }
 
-@media (max-width: 480px) {
-  .register-container {
-    padding: 28px 22px;
-    width: 92vw;
-  }
-  .register-logo {
-    width: 160px;
-  }
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .reg-submit, .toggle-password{ transition: none; }
 }

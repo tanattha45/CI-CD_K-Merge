@@ -1,117 +1,101 @@
-import { useState } from "react";
+import Navbar from "../components/Navbar";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./register.css";
-import logo from "../assets/logo.png";
+
+
+type RegisterForm = {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  phone: string;
+};
 
 export default function Register() {
-  const [form, setForm] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    phone: "",
+  const [form, setForm] = useState<RegisterForm>({
+    username: "", email: "", password: "", confirmPassword: "", phone: "",
   });
-
-  // state สำหรับสลับการแสดงรหัสผ่าน
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onChange =
-    (field: keyof typeof form) =>
-    (e: React.ChangeEvent<HTMLInputElement>) =>
-      setForm({ ...form, [field]: e.target.value });
+    (field: keyof RegisterForm) =>
+    (e: ChangeEvent<HTMLInputElement>) =>
+      setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("submit", form);
   };
 
   return (
-    <div className="register-page">
-      <div className="register-shell">
-        {/* โลโก้ K-Merge */}
-        <img src={logo} alt="K-Merge" className="register-logo" />
-
-        <div className="register-container">
-          <h2>สร้างบัญชี</h2>
-
-          <form onSubmit={onSubmit}>
-            <div className="reg-field">
-              <label>ชื่อผู้ใช้</label>
-              <input
-                type="text"
-                placeholder="ระบุชื่อผู้ใช้"
-                value={form.username}
-                onChange={onChange("username")}
-              />
-            </div>
-
-            <div className="reg-field">
-              <label>อีเมลที่ติดต่อได้</label>
-              <input
-                type="email"
-                placeholder="ระบุอีเมล"
-                value={form.email}
-                onChange={onChange("email")}
-              />
-            </div>
-
-            {/* ช่องรหัสผ่าน */}
-            <div className="reg-field password-field">
-              <label>รหัสผ่าน</label>
-              <div className="password-wrapper">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="ระบุรหัสผ่าน"
-                  value={form.password}
-                  onChange={onChange("password")}
-                />
-                <span
-                  className="toggle-password"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <FaEye /> : <FaEyeSlash />}
-                </span>
+    <>
+      <Navbar />
+      <div className="register-page">
+        <div className="register-shell">
+          <div className="register-container">
+            <h2>สร้างบัญชี</h2>
+            <form onSubmit={onSubmit} noValidate autoComplete="on">
+              <div className="reg-field">
+                <label htmlFor="username">ชื่อผู้ใช้</label>
+                <input id="username" name="username" type="text"
+                  placeholder="ระบุชื่อผู้ใช้" value={form.username}
+                  onChange={onChange("username")} required minLength={3}
+                  autoComplete="username" />
               </div>
-            </div>
 
-            {/* ช่องยืนยันรหัสผ่าน */}
-            <div className="reg-field password-field">
-              <label>ยืนยันรหัสผ่าน</label>
-              <div className="password-wrapper">
-                <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="ระบุยืนยันรหัสผ่าน"
-                  value={form.confirmPassword}
-                  onChange={onChange("confirmPassword")}
-                />
-                <span
-                  className="toggle-password"
-                  onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
-                >
-                  {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-                </span>
+              <div className="reg-field">
+                <label htmlFor="email">อีเมลที่ติดต่อได้</label>
+                <input id="email" name="email" type="email"
+                  placeholder="ระบุอีเมล" value={form.email}
+                  onChange={onChange("email")} required autoComplete="email" />
               </div>
-            </div>
 
-            <div className="reg-field">
-              <label>เบอร์โทรศัพท์ (ถ้ามี)</label>
-              <input
-                type="tel"
-                placeholder="ระบุเบอร์โทร"
-                value={form.phone}
-                onChange={onChange("phone")}
-              />
-            </div>
+              <div className="reg-field password-field">
+                <label htmlFor="password">รหัสผ่าน</label>
+                <div className="password-wrapper">
+                  <input id="password" name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="ระบุรหัสผ่าน" value={form.password}
+                    onChange={onChange("password")} required minLength={6}
+                    autoComplete="new-password" />
+                  <button type="button" className="toggle-password"
+                    aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
+                    onClick={() => setShowPassword((s) => !s)}>
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+              </div>
 
-            <button className="reg-submit" type="submit">
-              สร้างบัญชี
-            </button>
-          </form>
+              <div className="reg-field password-field">
+                <label htmlFor="confirmPassword">ยืนยันรหัสผ่าน</label>
+                <div className="password-wrapper">
+                  <input id="confirmPassword" name="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="ระบุยืนยันรหัสผ่าน" value={form.confirmPassword}
+                    onChange={onChange("confirmPassword")} required minLength={6}
+                    autoComplete="new-password" />
+                  <button type="button" className="toggle-password"
+                    aria-label={showConfirmPassword ? "ซ่อนยืนยันรหัสผ่าน" : "แสดงยืนยันรหัสผ่าน"}
+                    onClick={() => setShowConfirmPassword((s) => !s)}>
+                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                  </button>
+                </div>
+              </div>
+
+              <div className="reg-field">
+                <label htmlFor="phone">เบอร์โทรศัพท์ (ถ้ามี)</label>
+                <input id="phone" name="phone" type="tel"
+                  placeholder="ระบุเบอร์โทร" value={form.phone}
+                  onChange={onChange("phone")} autoComplete="tel" inputMode="tel" />
+              </div>
+
+              <button className="reg-submit" type="submit">สร้างบัญชี</button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
