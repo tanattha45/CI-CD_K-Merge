@@ -1,0 +1,140 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #f7d9bc;
+  font-family: 'Prompt', sans-serif;
+  box-sizing: border-box;
+}
+*, *::before, *::after { box-sizing: inherit; }
+
+/* ===== หน้า Register กลางจอ ===== */
+.register-page {
+  position: fixed;
+  inset: 0;                
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f7d9bc;
+}
+
+/*ครอบโลโก้ + กล่องฟอร์ม */
+.register-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;                 
+}
+
+/* โลโก้ด้านบน */
+.register-logo {
+  width: 220px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ===== กล่องฟอร์ม ===== */
+.register-container {
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  padding: 40px 50px;
+  width: 420px;             
+  max-width: 92vw;
+  text-align: center;        
+}
+
+/* ===== หัวข้อ ===== */
+.register-container h2 {
+  font-size: 22px;
+  margin-bottom: 25px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* ===== ฟิลด์กรอกข้อมูล ===== */
+.reg-field {
+  text-align: left;         
+  margin-bottom: 18px;
+}
+
+.reg-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+.reg-field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+.reg-field input:focus {
+  border-color: #f7931a;
+  box-shadow: 0 0 4px rgba(247, 147, 26, 0.4);
+}
+
+/* ===== กล่องรหัสผ่าน + ไอคอนตา ===== */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.password-wrapper input {
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+}
+
+/* ไอคอนตา (เปิด/ปิดรหัส) */
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #888;
+  user-select: none;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.toggle-password:hover {
+  color: #f7931a;
+  transform: translateY(-50%) scale(1.15);
+}
+
+/* ===== ปุ่มสร้างบัญชี ===== */
+.reg-submit {
+  width: 100%;
+  background-color: #f7931a;
+  color: #fff;
+  font-weight: bold;
+  padding: 12px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+}
+.reg-submit:hover {
+  background-color: #e08517;
+}
+
+@media (max-width: 480px) {
+  .register-container {
+    padding: 28px 22px;
+    width: 92vw;
+  }
+  .register-logo {
+    width: 160px;
+  }
+}
