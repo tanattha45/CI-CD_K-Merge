@@ -4,12 +4,12 @@ import "./login.css";
 import { useState, type FormEvent } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 // import { useAuth } from "../contexts/AuthContext"; // TODO(BE): enable when backend ready
-
+const API_BASE = 'http://localhost:3000'
 export default function Login() {
   // const { signInWithGoogle } = useAuth(); // TODO(BE): get from AuthContext
   const signInWithGoogle = () => {
     // FRONTEND-ONLY MODE: เมื่อ backend พร้อม ให้เรียก /api/auth/google
-    window.location.href = "./contexts/AuthContext";
+    window.location.href = `${API_BASE}/auth/login`;
   };
 
   const [email, setEmail] = useState("");
