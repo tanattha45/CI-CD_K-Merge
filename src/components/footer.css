@@ -1,0 +1,132 @@
+/* ========== K-Merge Footer (Modern White–Orange) ========== */
+
+:root {
+  --km-brand: #e69525;
+  --km-text: #171717;
+  --km-muted: #666;
+  --km-border: #e9e9e9;
+  --km-bg: #ffffff;
+}
+
+/* ==== Layout ==== */
+.km-footer {
+  background: var(--km-bg);
+  border-top: 1px solid var(--km-border);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+  padding: 2.5rem 1.5rem 1.25rem;
+  color: var(--km-text);
+  font-family: "Inter", sans-serif;
+}
+
+.km-footer__container {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+/* ==== Brand ==== */
+.km-footer__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+
+.km-footer__logo {
+  height: clamp(4rem, 14vw, 8rem);
+  width: auto;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06));
+}
+.km-footer__title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--km-brand);
+}
+
+/* ==== Nav ==== */
+.km-footer__nav {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+.km-footer__nav a {
+  color: var(--km-text);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease, transform 0.12s ease;
+}
+.km-footer__nav a:hover {
+  color: var(--km-brand);
+  transform: translateY(-1px);
+}
+
+/* ==== Social ==== */
+.km-footer__social {
+  display: flex;
+  gap: 1rem;
+}
+.km-footer__social a {
+  font-size: 1.25rem;
+  color: var(--km-text);
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+.km-footer__social a:hover {
+  color: var(--km-brand);
+  transform: scale(1.1);
+}
+
+/* ==== Copyright ==== */
+.km-footer__copy {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--km-muted);
+  border-top: 1px solid var(--km-border);
+  padding-top: 1rem;
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 600px) {
+  .km-footer__container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .km-footer__nav {
+    justify-content: center;
+  }
+  .km-footer__social {
+    justify-content: center;
+  }
+}
+
+/* ==== Scrollbar Styling ==== */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--km-brand) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--km-brand) 60%, #ccc),
+    color-mix(in oklab, var(--km-brand) 80%, #aaa)
+  );
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--km-brand) 80%, #bbb),
+    color-mix(in oklab, var(--km-brand) 100%, #888)
+  );
+}
