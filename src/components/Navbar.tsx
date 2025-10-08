@@ -1,26 +1,40 @@
+// src/components/Navbar.tsx
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-// import { useAuth } from "../contexts/AuthContext"; // TODO(BE): uncomment when backend ready
 import logo from "../assets/logo.png";
 import "./navbar.css";
 
-export default function Navbar() {
-  // ─────────────────────────────────────────────────────────────
-  // FRONTEND-ONLY MODE (no AuthContext)
-  // When backend is ready, remove the 3 lines below and use useAuth().
-  // const { user, loading, signOut, signInWithGoogle } = useAuth();
-  const loading = false;                 // TODO(BE): derive from context
-  const user: null | { name?: string; email?: string } = null; // TODO(BE): real user from /api/auth/me
-  const signOut = async () => { /* TODO(BE): POST /api/auth/logout */ };
-  // const signInWithGoogle = () => window.location.href = "/api/auth/google"; // optional
-  // ─────────────────────────────────────────────────────────────
+type UserLite = {
+  id: string;
+  email?: string | null;
+  user_metadata?: { full_name?: string; name?: string; picture?: string };
+};
 
+export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<UserLite | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
-  // ปิด dropdown เมื่อเปลี่ยนหน้า หรือคลิกนอกกรอบ / กด Esc
+  const loadMe = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/auth/me", { credentials: "include" }); // ← ผ่าน proxy
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      setUser(json?.user ?? null);
+    } catch (e) {
+      console.error("loadMe failed:", e);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { loadMe(); }, []);
   useEffect(() => setOpen(false), [location.pathname]);
+
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (!menuRef.current) return;
@@ -35,9 +49,30 @@ export default function Navbar() {
     };
   }, []);
 
+  // กลับหน้าจอ/สลับแท็บ → refresh สถานะ (หลัง redirect จาก Google)
+  useEffect(() => {
+    const onFocus = () => loadMe();
+    const onVis = () => { if (document.visibilityState === "visible") loadMe(); };
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onVis);
+    };
+  }, []);
+
+  const signInWithGoogle = () => { window.location.href = "/auth/login"; }; // ← ผ่าน proxy
+  const signOut = async () => {
+    await fetch("/auth/logout", { method: "POST", credentials: "include" });
+    setUser(null);
+    setOpen(false);
+  };
+
+  const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "User";
+  const initial = (displayName || "U").slice(0, 1).toUpperCase();
+
   return (
     <nav className="km-nav" aria-label="Primary">
-      {/* LEFT: Logo → Home */}
       <div className="km-nav__left">
         <Link
           to="/"
@@ -49,22 +84,15 @@ export default function Navbar() {
         </Link>
       </div>
 
-      {/* RIGHT: Frontend-only
-          - ยังไม่เช็คสถานะ auth จริง
-          - แสดงปุ่ม Sign In เสมอ (ยกเว้นอยู่ที่ /login) */}
       <div className="km-nav__right">
+        {loading && <div className="km-skel km-skel--btn" aria-hidden="true" />}
         {!loading && !user && (
           <>
-            {/* ทางเลือก 1: ส่งผู้ใช้ไปหน้า /login (แนะนำช่วง frontend-only) */}
             <Link to="/login" className="km-btn km-btn--minimal">Sign In</Link>
-
-            {/* ทางเลือก 2 (BE พร้อมแล้ว): ไป Google OAuth ตรงๆ
-                <button className="km-btn km-btn--minimal" onClick={signInWithGoogle}>Sign In</button>
-            */}
+            {/* หรือจะให้ login ตรงเลยก็ได้: <button className="km-btn km-btn--minimal" onClick={signInWithGoogle}>Sign In</button> */}
           </>
         )}
 
-        {/* โครงสำหรับตอน “ล็อกอินแล้ว” (ตอนนี้ยังไม่ใช้) */}
         {!loading && user && (
           <div className="km-profile" ref={menuRef}>
             <button
@@ -74,40 +102,26 @@ export default function Navbar() {
               aria-label="Open profile menu"
               onClick={() => setOpen(v => !v)}
             >
-              {(user.name || user.email || "U").slice(0, 1).toUpperCase()}
+              {initial}
             </button>
 
             {open && (
               <div className="km-dropdown" role="menu" aria-label="Profile">
                 <div className="km-dropdown__header">
-                  <div className="km-avatar km-avatar--sm" aria-hidden="true">
-                    {(user.name || user.email || "U").slice(0, 1).toUpperCase()}
-                  </div>
+                  <div className="km-avatar km-avatar--sm" aria-hidden="true">{initial}</div>
                   <div className="km-user">
-                    <div className="km-user__name">{user.name || "User"}</div>
-                    <div className="km-user__sub">{user.email}</div>
+                    <div className="km-user__name">{displayName}</div>
+                    <div className="km-user__sub">{user?.email}</div>
                   </div>
                 </div>
 
                 <div className="km-dropdown__sep" />
 
-                <Link
-                  to="/profile"
-                  className="km-dropdown__item"
-                  role="menuitem"
-                  onClick={() => setOpen(false)}
-                >
+                <Link to="/profile" className="km-dropdown__item" role="menuitem" onClick={() => setOpen(false)}>
                   Profile
                 </Link>
 
-                <button
-                  className="km-dropdown__item"
-                  role="menuitem"
-                  onClick={async () => {
-                    await signOut();
-                    setOpen(false);
-                  }}
-                >
+                <button className="km-dropdown__item" role="menuitem" onClick={signOut}>
                   Logout
                 </button>
               </div>

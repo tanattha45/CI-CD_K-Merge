@@ -9,7 +9,7 @@ export default function Login() {
   // const { signInWithGoogle } = useAuth(); // TODO(BE): get from AuthContext
   const signInWithGoogle = () => {
     // FRONTEND-ONLY MODE: เมื่อ backend พร้อม ให้เรียก /api/auth/google
-    window.location.href = `${API_BASE}/auth/login`;
+    window.location.href = `/auth/login`;
   };
 
   const [email, setEmail] = useState("");
