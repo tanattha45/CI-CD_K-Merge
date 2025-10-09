@@ -1,0 +1,119 @@
+/* --- พื้นหลังหลัก --- */
+.edit-bg {
+  background-color: #fce1d1;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- กล่องรวม --- */
+.edit-container {
+  text-align: center;
+}
+
+/* โลโก้ */
+.edit-logo {
+  font-size: 36px;
+  font-weight: 900;
+  color: #f57c00;
+  margin-bottom: 20px;
+}
+
+.highlight {
+  margin: 0 5px;
+}
+
+/* กล่องฟอร์ม */
+.edit-card {
+  background: #fff;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  width: 500px;
+  margin: 0 auto;
+}
+
+/* ส่วนรูปโปรไฟล์ */
+.edit-avatar {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+/* ส่วนโปรไฟล์ */
+.edit-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* ระยะห่างระหว่างรูปกับปุ่ม */
+  margin-bottom: 20px;
+}
+
+.edit-avatar img {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #ffcc80;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ปุ่มแยกอยู่ใต้รูป */
+.edit-btn {
+  background-color: #f57c00;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  font-size: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.edit-btn:hover {
+  background-color: #ef6c00;
+}
+
+
+/* ฟอร์ม */
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.edit-form label {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.edit-form input {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+}
+
+.edit-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.save-btn {
+  background: #f57c00;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
