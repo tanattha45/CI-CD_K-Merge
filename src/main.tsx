@@ -5,26 +5,22 @@ import App from "./App";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile"; // ✅ เพิ่ม import หน้านี้เข้ามา
 import "./index.css";
-// import ProtectedRoute from "./routes/ProtectedRoute";
-// import { AuthProvider } from "./contexts/AuthContext";
 
 /**
  * Router setup (frontend only)
  *  - ยังไม่ใช้ AuthProvider / ProtectedRoute
  *  - ตอนนี้ทุกหน้าสามารถเข้าถึงได้อิสระ
- *  - backend ให้ import ProtectedRoute หรือ AuthProvider
  */
-
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
   { path: "/profile", element: <Profile /> },
+  { path: "/edit-profile", element: <EditProfile /> }, // ✅ เพิ่ม path หน้านี้
 ]);
-
-
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
