@@ -1,0 +1,192 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #f7d9bc;
+  font-family: "Prompt", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  box-sizing: border-box;
+}
+*, *::before, *::after { box-sizing: inherit; }
+
+/* ========== ฉากหลัง + จัดวางการ์ดกลางจอ ========== */
+.profile-page {
+  min-height: 100vh;
+  width: 100vw;
+  background: #f7d9bc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px 0;
+  overflow-x: hidden;
+}
+
+/* การ์ดหลัก แบ่งซ้าย-ขวา */
+.profile-card {
+  width: 1200px;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+  background: transparent;
+  align-items: start;
+}
+
+/* ========== ด้านซ้าย (โปรไฟล์) ========== */
+.profile-left {
+  position: relative;
+  /* ปรับส่วนสีส้มให้ยาวลงมาครอบ 'XXXXXX' ทั้งหมด */
+  background: linear-gradient(to bottom, #e57b36 0% 75%, #ffffff 75% 100%);
+  color: #fff;
+  border-radius: 20px;            /* ขอบมนขึ้น */
+  padding: 24px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+/* ปุ่ม Edit (ตัวอักษร) */
+.edit-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 600;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,.22);
+  transition: transform .15s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.edit-btn:hover {
+  transform: translateY(-1px);
+  background: #000;
+  box-shadow: 0 8px 18px rgba(0,0,0,.28);
+}
+
+/* กรอบรูปโปรไฟล์ */
+.avatar-wrap {
+  width: 300px;
+  height: 300px;
+  margin: 8px auto 16px auto;
+  border-radius: 50%;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+}
+
+/* มีรูป */
+.avatar {
+  width: 100%;
+  height: 100%;
+}
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* ไม่มีรูป */
+.avatar-placeholder {
+  width: 92%;
+  height: 92%;
+  border-radius: 50%;
+  background:
+    radial-gradient(#f0f0f0 6px, transparent 7px) 0 0/24px 24px,
+    #ffffff;
+  display: grid;
+  place-items: center;
+  color: #666;
+  font-weight: 600;
+  font-size: 18px;
+  border: 1px dashed #d0d0d0;
+}
+.hidden-file { display: none; }
+
+/* ตัวอักษรใต้รูป (XXXXXX) */
+.username {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 6px;
+  margin-top: 8px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  font-size: 28px;
+}
+.username .code { color: #1f1f1f; }
+
+/* ไอคอนโซเชียล (อยู่ส่วนพื้นขาว) */
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin: 28px 0 12px;   /* ขยับลงเล็กน้อยให้ทิ้งจาก XXXXXX */
+}
+.social {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #1f1f1f;
+  text-decoration: none;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.16);
+  transition: transform .15s ease, box-shadow .2s ease;
+}
+.social:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.22);
+}
+.social svg { font-size: 22px; }
+
+/* ลิขสิทธิ์ */
+.copy {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 13px;
+  color: #1f1f1f;
+  opacity: .8;
+}
+
+/* ========== ด้านขวา ========== */
+.profile-right {
+  padding: 18px 8px;
+  color: #1f1f1f;
+  margin-top: 100px;
+  margin-left: 50px;
+}
+.title {
+  font-size: 56px;
+  line-height: 1.05;
+  margin: 0 0 12px 0;
+  font-weight: 900;
+}
+.subtitle {
+  font-size: 34px;
+  margin: 4px 0 18px 0;
+  font-weight: 700;
+}
+.bio {
+  max-width: 720px;
+  font-size: 18px;
+  line-height: 1.7;
+  color: #333;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 1100px) {
+  .profile-card {
+    width: min(94vw, 980px);
+    grid-template-columns: 1fr;
+  }
+  .profile-left { margin-bottom: 16px; }
+  .title { font-size: 44px; }
+  .subtitle { font-size: 26px; }
+}

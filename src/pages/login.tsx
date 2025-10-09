@@ -1,4 +1,5 @@
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import "./login.css";
 import { useState, type FormEvent } from "react";
@@ -118,6 +119,7 @@ export default function Login() {
           </button>
         </div>
       </main>
+      <Footer />
     </>
   );
 }
