@@ -1,16 +1,19 @@
 // src/contexts/AuthContext.tsx
-import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import { createContext, useState, useEffect, useContext, ReactNode, useCallback } from 'react';
 
+// Interface for the user object we expect from Supabase
 interface User {
   id: string;
   email?: string;
   user_metadata?: { [key: string]: any };
 }
 
+// Interface for the context's value
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   logout: () => Promise<void>;
+  refetchUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -19,15 +22,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = async () => {
+  // Function to fetch the current user's status from the backend
+  const fetchUser = useCallback(async () => {
     try {
-      setLoading(true);
+      // setLoading(true) is not strictly needed here on every call, 
+      // but good for the initial load.
       const res = await fetch("/auth/me", { credentials: "include" });
+      
       if (res.status === 401) {
         setUser(null);
         return;
       }
-      if (!res.ok) throw new Error("Failed to fetch user");
+      if (!res.ok) {
+        throw new Error("Failed to fetch user status");
+      }
       
       const data = await res.json();
       setUser(data.user);
@@ -37,29 +45,45 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const logout = async () => {
-    await fetch("/auth/logout", { method: "POST", credentials: "include" });
-    setUser(null);
-  };
-
-  useEffect(() => {
-    fetchUser();
-    // Add event listeners to refetch user on tab focus
-    window.addEventListener('focus', fetchUser);
-    return () => {
-      window.removeEventListener('focus', fetchUser);
-    };
   }, []);
 
+  // Function to log the user out
+  const logout = async () => {
+    try {
+      await fetch("/auth/logout", { method: "POST", credentials: "include" });
+      setUser(null);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  // Run fetchUser on initial component mount
+  useEffect(() => {
+    fetchUser();
+
+    // Add event listeners to refetch user on tab focus or visibility change
+    // This helps update the session if the user logs in/out in another tab
+    window.addEventListener('focus', fetchUser);
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === 'visible') {
+            fetchUser();
+        }
+    });
+
+    return () => {
+      window.removeEventListener('focus', fetchUser);
+      document.removeEventListener("visibilitychange", fetchUser);
+    };
+  }, [fetchUser]);
+
   return (
-    <AuthContext.Provider value={{ user, loading, logout }}>
+    <AuthContext.Provider value={{ user, loading, logout, refetchUser: fetchUser }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
+// Custom hook to easily access the auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {
