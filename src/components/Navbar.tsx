@@ -1,46 +1,28 @@
 // src/components/Navbar.tsx
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import "./navbar.css";
-
-type UserLite = {
-  id: string;
-  email?: string | null;
-  user_metadata?: { full_name?: string; name?: string; picture?: string };
-};
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<UserLite | null>(null);
+  const { user, loading, logout } = useAuth();
   const menuRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const loadMe = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("/auth/me", { credentials: "include" }); // ← ผ่าน proxy
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      setUser(json?.user ?? null);
-    } catch (e) {
-      console.error("loadMe failed:", e);
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { loadMe(); }, []);
   useEffect(() => setOpen(false), [location.pathname]);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
-      if (!menuRef.current) return;
-      if (!menuRef.current.contains(e.target as Node)) setOpen(false);
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
     };
-    const onEsc = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onEsc);
     return () => {
@@ -48,28 +30,16 @@ export default function Navbar() {
       document.removeEventListener("keydown", onEsc);
     };
   }, []);
-
-  // กลับหน้าจอ/สลับแท็บ → refresh สถานะ (หลัง redirect จาก Google)
-  useEffect(() => {
-    const onFocus = () => loadMe();
-    const onVis = () => { if (document.visibilityState === "visible") loadMe(); };
-    window.addEventListener("focus", onFocus);
-    document.addEventListener("visibilitychange", onVis);
-    return () => {
-      window.removeEventListener("focus", onFocus);
-      document.removeEventListener("visibilitychange", onVis);
-    };
-  }, []);
-
-  const signInWithGoogle = () => { window.location.href = "/auth/login"; }; // ← ผ่าน proxy
-  const signOut = async () => {
-    await fetch("/auth/logout", { method: "POST", credentials: "include" });
-    setUser(null);
+  
+  const handleSignOut = async () => {
+    await logout();
     setOpen(false);
+    navigate("/"); // Redirect to home after logout
   };
 
   const displayName = user?.user_metadata?.full_name || user?.user_metadata?.name || user?.email || "User";
   const initial = (displayName || "U").slice(0, 1).toUpperCase();
+  const avatarUrl = user?.user_metadata?.picture;
 
   return (
     <nav className="km-nav" aria-label="Primary">
@@ -85,12 +55,9 @@ export default function Navbar() {
       </div>
 
       <div className="km-nav__right">
-        {loading && <div className="km-skel km-skel--btn" aria-hidden="true" />}
+        {loading && <div className="km-avatar" style={{ visibility: 'hidden' }} />}
         {!loading && !user && (
-          <>
-            <Link to="/login" className="km-btn km-btn--minimal">Sign In</Link>
-            {/* หรือจะให้ login ตรงเลยก็ได้: <button className="km-btn km-btn--minimal" onClick={signInWithGoogle}>Sign In</button> */}
-          </>
+          <Link to="/login" className="km-btn km-btn--minimal">Sign In</Link>
         )}
 
         {!loading && user && (
@@ -102,13 +69,15 @@ export default function Navbar() {
               aria-label="Open profile menu"
               onClick={() => setOpen(v => !v)}
             >
-              {initial}
+              {avatarUrl ? <img src={avatarUrl} alt="Avatar" style={{width: '100%', height: '100%', borderRadius: '50%'}}/> : initial}
             </button>
 
             {open && (
               <div className="km-dropdown" role="menu" aria-label="Profile">
                 <div className="km-dropdown__header">
-                  <div className="km-avatar km-avatar--sm" aria-hidden="true">{initial}</div>
+                  <div className="km-avatar km-avatar--sm" aria-hidden="true">
+                    {avatarUrl ? <img src={avatarUrl} alt="Avatar" style={{width: '100%', height: '100%', borderRadius: '50%'}}/> : initial}
+                  </div>
                   <div className="km-user">
                     <div className="km-user__name">{displayName}</div>
                     <div className="km-user__sub">{user?.email}</div>
@@ -117,11 +86,11 @@ export default function Navbar() {
 
                 <div className="km-dropdown__sep" />
 
-                <Link to="/profile" className="km-dropdown__item" role="menuitem" onClick={() => setOpen(false)}>
+                <Link to="/profile" className="km-dropdown__item" role="menuitem">
                   Profile
                 </Link>
 
-                <button className="km-dropdown__item" role="menuitem" onClick={signOut}>
+                <button className="km-dropdown__item" role="menuitem" onClick={handleSignOut}>
                   Logout
                 </button>
               </div>

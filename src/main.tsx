@@ -1,29 +1,33 @@
+// src/main.tsx
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import Login from "./pages/login";
-import Register from "./pages/register";
+import Register from "./pages/Register";
 import Profile from "./pages/Profile";
-import EditProfile from "./pages/EditProfile"; // ✅ เพิ่ม import หน้านี้เข้ามา
+import EditProfile from "./pages/Editprofile";
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import "./index.css";
-
-/**
- * Router setup (frontend only)
- *  - ยังไม่ใช้ AuthProvider / ProtectedRoute
- *  - ตอนนี้ทุกหน้าสามารถเข้าถึงได้อิสระ
- */
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
-  { path: "/profile", element: <Profile /> },
-  { path: "/edit-profile", element: <EditProfile /> }, // ✅ เพิ่ม path หน้านี้
+  { 
+    element: <ProtectedRoute />,
+    children: [
+      { path: "/profile", element: <Profile /> },
+      { path: "/edit-profile", element: <EditProfile /> },
+    ]
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </React.StrictMode>
 );
