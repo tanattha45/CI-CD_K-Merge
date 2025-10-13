@@ -6,6 +6,7 @@ import App from "./App";
 import Login from "./pages/login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
+import VerifyEmail from "./pages/VerifyEmail";
 import EditProfile from "./pages/Editprofile";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
   { path: "/", element: <App /> },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
+  { path: "/verify", element: <VerifyEmail /> },
   { 
     element: <ProtectedRoute />,
     children: [
