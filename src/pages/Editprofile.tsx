@@ -1,8 +1,10 @@
 import React, { useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./EditProfile.css";
 import logo from "../assets/logo.png";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useAuth } from "../contexts/AuthContext";
 
 type TabKey = "account" | "contact";
 
@@ -10,13 +12,16 @@ export default function EditProfile() {
   const [tab, setTab] = useState<TabKey>("account");
   const [avatar, setAvatar] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const navigate = useNavigate();
+  const { user, refetchUser } = useAuth();
 
   // ----- form states -----
-  const [username, setUsername] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [aboutMe, setAboutMe] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneTH, setPhoneTH] = useState("");
+  const [username, setUsername] = useState(user?.user_metadata?.username || "");
+  const [fullName, setFullName] = useState(user?.user_metadata?.full_name || "");
+  const [aboutMe, setAboutMe] = useState(user?.user_metadata?.about || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [phoneTH, setPhoneTH] = useState(user?.user_metadata?.phone || "");
+  const [loading, setLoading] = useState(false);
 
   // basic validations (front-end only)
   const emailValid = useMemo(() => {
@@ -31,19 +36,109 @@ export default function EditProfile() {
   }, [phoneTH]);
 
   const pickImage = () => fileRef.current?.click();
-  const onImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const compressImage = async (file: File, maxWidth = 800, maxHeight = 800, quality = 0.8): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate new dimensions
+          if (width > height) {
+            if (width > maxWidth) {
+              height *= maxWidth / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width *= maxHeight / height;
+              height = maxHeight;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Failed to get canvas context'));
+            return;
+          }
+
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = reject;
+      };
+      reader.onerror = reject;
+    });
+  };
+
+  const onImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setAvatar(URL.createObjectURL(file));
+
+    try {
+      setLoading(true);
+      const compressed = await compressImage(file);
+      setAvatar(compressed);
+    } catch (error) {
+      console.error('Error compressing image:', error);
+      alert('รูปภาพมีปัญหา กรุณาลองใหม่');
+    } finally {
+      setLoading(false);
+    }
   };
   const clearImage = () => setAvatar(null);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: connect API
-    const payload = { username, fullName, aboutMe, email, phoneTH, avatar };
-    console.log("submit:", payload);
-    alert("บันทึกสำเร็จ (demo)");
+
+    try {
+      setLoading(true);
+      const formData = new FormData();
+
+      // Handle avatar (already compressed and in data URL format)
+      if (avatar) {
+        formData.append('avatar', avatar);
+      }
+
+      const payload = {
+        full_name: fullName,
+        username: username,
+        about: aboutMe,
+        phone: phoneTH.replace(/\s|-/g, ""),
+        avatar: formData.get('avatar')?.toString()
+      };
+
+      const res = await fetch('/auth/me', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+        credentials: 'include'
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      await refetchUser();
+      alert("บันทึกสำเร็จ");
+      navigate('/profile');
+
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert("เกิดข้อผิดพลาด กรุณาลองใหม่");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -67,6 +162,13 @@ export default function EditProfile() {
               aria-current={tab === "contact" ? "page" : undefined}
             >
               ข้อมูลติดต่อ
+            </button>
+            <button
+              className={`ep-nav__item ${tab === "account" ? "is-active" : ""}`}
+              onClick={() => setTab("account")}
+              aria-current={tab === "account" ? "page" : undefined}
+            >
+              ข้อมูลบัญชี
             </button>
           </nav>
         </aside>
@@ -201,9 +303,9 @@ export default function EditProfile() {
               <button
                 type="submit"
                 className="btn btn-primary"
-                disabled={!emailValid || !phoneValid}
+                disabled={!emailValid || !phoneValid || loading}
               >
-                บันทึกการแก้ไข
+                {loading ? "กำลังบันทึก..." : "บันทึกการแก้ไข"}
               </button>
             </div>
           </form>
