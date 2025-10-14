@@ -1,119 +1,291 @@
-/* --- พื้นหลังหลัก --- */
-.edit-bg {
-  background-color: #fce1d1;
+/* ===== Design tokens ===== */
+:root {
+  --ep-bg: #f7f8fb;
+  --ep-card: #ffffff;
+  --ep-line: #eaecf0;
+  --ep-text: #0f172a;
+  --ep-muted: #6b7280;
+  --ep-primary: #f57c00;     /* Orange */
+  --ep-primary-600: #ef6c00; /* Hover */
+  --ep-primary-50: #fff3e0;  /* Soft bg */
+  --ep-radius: 16px;
+  --ep-shadow: 0 8px 28px rgba(16, 24, 40, 0.08);
+}
+
+/* ===== Layout ===== */
+.ep-bg {
   min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background: var(--ep-bg);
 }
 
-/* --- กล่องรวม --- */
-.edit-container {
-  text-align: center;
+.ep-header {
+  background: var(--ep-card);
+  border-bottom: 1px solid var(--ep-line);
 }
 
-/* โลโก้ */
-.edit-logo {
-  font-size: 36px;
-  font-weight: 900;
-  color: #f57c00;
-  margin-bottom: 20px;
-}
-
-.highlight {
-  margin: 0 5px;
-}
-
-/* กล่องฟอร์ม */
-.edit-card {
-  background: #fff;
-  padding: 40px;
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  width: 500px;
+.ep-header__inner {
+  max-width: 1120px;
   margin: 0 auto;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-/* ส่วนรูปโปรไฟล์ */
-.edit-avatar {
+.ep-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.ep-header__title h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ep-text);
+}
+
+.ep-header__title p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--ep-muted);
+}
+
+.ep-shell {
+  max-width: 1120px;
+  margin: 24px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+}
+
+/* ===== Sidebar ===== */
+.ep-sidebar {
   position: relative;
-  margin-bottom: 20px;
 }
 
-/* ส่วนโปรไฟล์ */
-.edit-avatar {
+.ep-nav {
+  position: sticky;
+  top: 16px;
+  background: var(--ep-card);
+  border: 1px solid var(--ep-line);
+  border-radius: var(--ep-radius);
+  box-shadow: var(--ep-shadow);
+  padding: 8px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 10px; /* ระยะห่างระหว่างรูปกับปุ่ม */
-  margin-bottom: 20px;
+  gap: 6px;
 }
 
-.edit-avatar img {
-  width: 160px;
-  height: 160px;
+.ep-nav__item {
+  appearance: none;
+  border: none;
+  text-align: left;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--ep-text);
+  background: transparent;
+  cursor: pointer;
+}
+
+.ep-nav__item:hover {
+  background: #fafafa;
+}
+
+.ep-nav__item.is-active {
+  background: var(--ep-primary-50);
+  color: var(--ep-primary);
+  font-weight: 600;
+  border: 1px solid #ffe0b2;
+}
+
+/* ===== Content/Card ===== */
+.ep-content {
+  min-width: 0;
+}
+
+.ep-card {
+  background: var(--ep-card);
+  border: 1px solid var(--ep-line);
+  border-radius: var(--ep-radius);
+  box-shadow: var(--ep-shadow);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.ep-block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-bottom: 1px dashed var(--ep-line);
+  padding-bottom: 12px;
+}
+
+.ep-block:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.ep-block__title {
+  font-weight: 700;
+  color: var(--ep-text);
+  font-size: 16px;
+}
+
+/* Avatar */
+.ep-avatar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.ep-avatar img {
+  width: 96px;
+  height: 96px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid #ffcc80;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 3px solid #ffe0b2;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.07);
+  background: #fff;
 }
 
-/* ปุ่มแยกอยู่ใต้รูป */
-.edit-btn {
-  background-color: #f57c00;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
+.ep-avatar__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.ep-help {
+  width: 100%;
   font-size: 12px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  color: var(--ep-muted);
 }
 
-.edit-btn:hover {
-  background-color: #ef6c00;
+/* Grid form */
+.ep-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
 }
 
-
-/* ฟอร์ม */
-.edit-form {
+.ep-field {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  text-align: left;
+  gap: 8px;
 }
 
-.edit-form label {
-  font-weight: bold;
+.ep-field--full {
+  grid-column: 1 / -1;
+}
+
+.ep-field label {
+  font-size: 13px;
+  color: var(--ep-text);
+  font-weight: 600;
+}
+
+.ep-field input,
+.ep-field textarea {
+  border: 1px solid var(--ep-line);
+  border-radius: 12px;
+  padding: 12px 14px;
   font-size: 14px;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.edit-form input {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  font-size: 14px;
+.ep-field textarea {
+  resize: vertical;
 }
 
-.edit-actions {
+.ep-field input:focus,
+.ep-field textarea:focus {
+  border-color: #ffcc80;
+  box-shadow: 0 0 0 4px rgba(245, 124, 0, 0.12);
+}
+
+.ep-hint {
+  font-size: 12px;
+  color: var(--ep-muted);
+}
+
+.ep-hint-row {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  align-items: center;
 }
 
-.cancel-btn {
+.ep-count {
+  font-size: 12px;
+  color: var(--ep-muted);
+}
+
+.ep-error {
+  font-size: 12px;
+  color: #b42318;
+}
+
+/* Actions */
+.ep-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+/* Buttons */
+.btn {
+  appearance: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid var(--ep-line);
   background: #fff;
-  border: 1px solid #ccc;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
+  color: var(--ep-text);
 }
 
-.save-btn {
-  background: #f57c00;
+.btn:hover {
+  background: #fafafa;
+}
+
+.btn-primary {
+  background: var(--ep-primary);
+  border-color: var(--ep-primary);
   color: #fff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: var(--ep-primary-600);
+  border-color: var(--ep-primary-600);
+}
+
+.btn-ghost {
+  background: transparent;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 920px) {
+  .ep-shell {
+    grid-template-columns: 1fr;
+  }
+  .ep-nav {
+    flex-direction: row;
+    position: static;
+  }
+  .ep-nav__item {
+    flex: 1;
+    text-align: center;
+  }
+  .ep-grid {
+    grid-template-columns: 1fr;
+  }
+  .ep-avatar {
+    align-items: flex-start;
+  }
 }

@@ -3,59 +3,122 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import "./App.css";
 
+type Chip = string;
+
+type Card = {
+  id: number;
+  title: string;
+  body: string;
+  tags: Chip[];
+};
+
+// ----- Tag pool (ตัวอย่าง) -----
+const ALL_TAGS: Chip[] = [
+  "Prototyping",
+  "Sketch",
+  "Product",
+  "Figma",
+  "UI kit",
+  "Usability",
+  "Wireframing",
+  "Leadership",
+  "UI design",
+  "ReactJS",
+  "Photoshop",
+];
+
 export default function App() {
-  // --- Mock data (placeholder) ---
-  const baseCards = useMemo(
-    () =>
-      Array.from({ length: 6 }).map((_, i) => ({
-        id: i + 1,
-        title: `Title ${i + 1}`,
-        body:
-          "Body text for whatever you’d like to say. Add small teasers, notes, quotes, anecdotes, or even a very short story.",
-      })),
-    []
-  );
+  // ===== Mock data (มี tags เพื่อนำไปกรอง) =====
+  const baseCards: Card[] = useMemo(() => {
+    // กระจายแท็กแบบง่าย ๆ เพื่อเดโม่
+    const tagGroups: Chip[][] = [
+      ["Figma", "UI kit", "Prototyping"],
+      ["Sketch", "UI design", "Wireframing"],
+      ["ReactJS", "Product"],
+      ["Usability", "UI design"],
+      ["Figma", "Usability", "Product"],
+      ["ReactJS", "UI kit"],
+      ["Leadership", "Product"],
+      ["Photoshop", "UI design"],
+      ["Wireframing", "Prototyping"],
+    ];
+    return Array.from({ length: 9 }).map((_, i) => ({
+      id: i + 1,
+      title: `Project #${i + 1}`,
+      body:
+        "Short description for student work. Add teasers, notes, or a quick overview of the project.",
+      tags: tagGroups[i % tagGroups.length],
+    }));
+  }, []);
 
-  // --- UI state (ยังไม่ผูก backend) ---
+  // ===== UI state =====
   const [q, setQ] = useState("");
+  const [selected, setSelected] = useState<Set<Chip>>(new Set());
+  const [sort, setSort] = useState<"popular" | "newest" | "featured">("popular");
 
-  // ตัวอย่าง filter ฝั่งหน้าเว็บ (เดี๋ยวค่อยต่อ backend)
+  // Toggle เลือก/ยกเลิกแท็ก
+  const toggleTag = (tag: Chip) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(tag) ? next.delete(tag) : next.add(tag);
+      return next;
+    });
+  };
+
+  const clearAll = () => setSelected(new Set());
+
+  // ===== Filter + Search + Sort =====
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
-    if (!query) return baseCards;
-    return baseCards.filter(
-      (c) =>
-        c.title.toLowerCase().includes(query) ||
-        c.body.toLowerCase().includes(query)
-    );
-  }, [q, baseCards]);
+    let data = baseCards;
 
-  const onSearch = () => {
-    // TODO: connect to backend /api/search?q=...
-    console.log("search:", q);
-  };
+    // search
+    if (query) {
+      data = data.filter(
+        (c) =>
+          c.title.toLowerCase().includes(query) ||
+          c.body.toLowerCase().includes(query) ||
+          c.tags.some((t) => t.toLowerCase().includes(query))
+      );
+    }
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSearch();
-  };
+    // tag filter: ต้อง “มีครบทุกอันที่เลือก” (AND)
+    if (selected.size > 0) {
+      data = data.filter((c) =>
+        Array.from(selected).every((t) => c.tags.includes(t))
+      );
+    }
+
+    // sort (เดโม่)
+    if (sort === "newest") data = [...data].reverse();
+    if (sort === "featured") data = data.slice(0, 6);
+
+    return data;
+  }, [q, selected, baseCards, sort]);
 
   return (
     <>
       <Navbar />
 
-      <main className="km-container">
-        {/* ===== Hero ===== */}
+      <main className="km-wrap">
+        {/* ===== Hero (คงสีเดิม) ===== */}
         <section className="km-hero" aria-labelledby="hero-title">
-          <div className="km-hero__inner">
-            <h1 id="hero-title" className="km-hero__title">K-Merge</h1>
+          <div className="km-hero__inner fade-in-up">
+            <h1 id="hero-title" className="km-hero__title">
+              K-Merge
+            </h1>
             <p className="km-hero__subtitle">
-              Discover amazing portfolios and creative works from KMUTT University.
-              Showcase your talent and explore innovative projects.
+              Discover amazing portfolios from KMUTT students. Showcase your
+              talent and explore innovative projects.
             </p>
 
-            {/* Search Bar */}
-            <form className="km-search" onSubmit={onSubmit} role="search" aria-label="Sitewide">
+            {/* Search - responsive */}
+            <form
+              className="km-search"
+              onSubmit={(e) => e.preventDefault()}
+              role="search"
+              aria-label="Sitewide"
+            >
               <input
                 className="km-search__input"
                 placeholder="Search student works, projects, and portfolios…"
@@ -65,13 +128,7 @@ export default function App() {
               />
               <button className="km-search__btn" type="submit">
                 <span>Search</span>
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden="true"
-                >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                   <path
                     d="M21 21l-4.2-4.2M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z"
                     stroke="currentColor"
@@ -84,63 +141,122 @@ export default function App() {
           </div>
         </section>
 
-        {/* ===== Filter & Browse ===== */}
+        {/* ===== Browse + Filters ===== */}
         <section className="km-section" aria-labelledby="browse-title">
           <div className="km-section__head">
             <div>
-              <h3 id="browse-title" className="km-section__title">Filter &amp; Browse</h3>
+              <h3 id="browse-title" className="km-section__title">
+                Browse
+              </h3>
               <p className="km-section__sub">Explore work here</p>
             </div>
 
-            {/* Chips (placeholder) */}
-            <div className="km-chips" role="group" aria-label="Quick filters">
-              <button className="km-chip" type="button" aria-pressed="false">Popular</button>
-              <button className="km-chip" type="button" aria-pressed="false">Newest</button>
-              <button className="km-chip" type="button" aria-pressed="false">Featured</button>
+            <div className="km-controls">
+              <button type="button" className="km-filterbtn" aria-label="Filters">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 7h16M7 12h10M10 17h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+                Filters
+              </button>
+
+              <button type="button" className="km-clear" onClick={clearAll} disabled={selected.size === 0}>
+                Clear all
+              </button>
+
+              <div className="km-sort">
+                <label className="sr-only" htmlFor="sort">Sort by</label>
+                <select
+                  id="sort"
+                  className="km-sort__select"
+                  value={sort}
+                  onChange={(e) => setSort(e.target.value as any)}
+                >
+                  <option value="popular">Popular</option>
+                  <option value="newest">Newest</option>
+                  <option value="featured">Featured</option>
+                </select>
+              </div>
             </div>
           </div>
 
-          {/* ===== Cards Grid ===== */}
+          {/* Chips (compact, selectable) */}
+          <div className="km-chips km-chips--compact" role="group" aria-label="Active filters">
+            {ALL_TAGS.map((tag) => {
+              const active = selected.has(tag);
+              return (
+                <button
+                  key={tag}
+                  type="button"
+                  className={`km-chip km-chip--compact ${active ? "is-active" : ""}`}
+                  aria-pressed={active}
+                  onClick={() => toggleTag(tag)}
+                >
+                  {active && (
+                    <svg className="km-chip__check" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    </svg>
+                  )}
+                  {tag}
+                  {active && <span className="km-chip__x" aria-hidden>×</span>}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Cards */}
           {filtered.length > 0 ? (
             <div className="km-grid" aria-live="polite">
-              {filtered.map((c) => (
-                <article key={c.id} className="km-card">
+              {filtered.map((c, idx) => (
+                <article
+                  key={c.id}
+                  className="km-card fade-in-up"
+                  style={{ animationDelay: `${Math.min(idx, 6) * 60}ms` }}
+                >
                   <div className="km-card__thumb" aria-hidden="true">
-                    <div className="km-thumb__icon">
-                      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" />
-                        <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" />
-                        <path
-                          d="M21 17l-6-6-9 9"
-                          stroke="currentColor"
-                          strokeWidth="1.5"
-                          fill="none"
-                        />
-                      </svg>
-                    </div>
+                    <div className="km-thumb__shape" />
                   </div>
                   <div className="km-card__body">
                     <h4 className="km-card__title">{c.title}</h4>
                     <p className="km-card__text">{c.body}</p>
+                    <div className="km-card__tags">
+                      {c.tags.map((t) => (
+                        <span
+                          key={t}
+                          className={`km-tag ${selected.has(t) ? "is-on" : ""}`}
+                          onClick={() => toggleTag(t)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggleTag(t)}
+                          aria-pressed={selected.has(t)}
+                          title={`Filter by ${t}`}
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </article>
               ))}
             </div>
           ) : (
-            // Empty state เมื่อค้นหาไม่เจอ
             <div className="km-empty">
               <div className="km-empty__icon" aria-hidden="true">🔎</div>
               <h4 className="km-empty__title">No results</h4>
               <p className="km-empty__text">
-                Try a different keyword or clear the search box to see all works.
+                Try a different keyword or clear filters to see more results.
               </p>
-              <button className="km-btn km-btn--minimal" onClick={() => setQ("")}>
-                Clear search
-              </button>
+              <div className="km-empty__actions">
+                <button className="km-btn km-btn--minimal" onClick={() => setQ("")}>
+                  Clear search
+                </button>
+                <button className="km-btn km-btn--minimal" onClick={clearAll} disabled={selected.size === 0}>
+                  Clear filters
+                </button>
+              </div>
             </div>
           )}
 
-          {/* ===== Pagination (placeholder) ===== */}
+          {/* Pagination (placeholder) */}
           <div className="km-pager" role="navigation" aria-label="Pagination">
             <button className="km-iconbtn" aria-label="Previous" disabled>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -157,7 +273,6 @@ export default function App() {
         </section>
       </main>
 
-      {/* ===== Footer ===== */}
       <Footer />
     </>
   );

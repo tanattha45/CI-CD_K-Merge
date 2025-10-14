@@ -6,43 +6,55 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="km-footer">
+    <footer className="km-footer" role="contentinfo">
       <div className="km-footer__container">
-        {/* Logo / Brand */}
+        {/* Brand */}
         <div className="km-footer__brand">
-          <img
-            src={logo}
-            alt="K-Merge Logo"
-            className="km-footer__logo"
-          />
+          <img src={logo} alt="K-Merge logo" className="km-footer__logo" />
+          <div className="km-footer__brandtext">
+            <strong>K-Merge</strong>
+            <span>Student Portfolio Hub</span>
+          </div>
         </div>
 
-        {/* Navigation */}
-        <nav className="km-footer__nav">
-          <a href="/">Home</a>
-          <a href="/browse">Browse</a>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
-        </nav>
+        {/* Tagline / message */}
+        <p className="km-footer__tagline">
+          Showcase your work. Discover opportunities.
+        </p>
 
-        {/* Social icons */}
-        <div className="km-footer__social">
-          <a href="https://facebook.com" aria-label="Facebook">
+        {/* Social */}
+        <div className="km-footer__social" aria-label="Social links">
+          <a
+            href="https://facebook.com"
+            aria-label="Facebook"
+            target="_blank"
+            rel="noopener"
+            className="km-socialbtn"
+          >
             <FaFacebook />
           </a>
-          <a href="https://instagram.com" aria-label="Instagram">
+          <a
+            href="https://instagram.com"
+            aria-label="Instagram"
+            target="_blank"
+            rel="noopener"
+            className="km-socialbtn"
+          >
             <FaInstagram />
           </a>
-          <a href="https://github.com" aria-label="GitHub">
+          <a
+            href="https://github.com"
+            aria-label="GitHub"
+            target="_blank"
+            rel="noopener"
+            className="km-socialbtn"
+          >
             <FaGithub />
           </a>
         </div>
       </div>
 
-      {/* Copyright */}
-      <div className="km-footer__copy">
-        © {year} K-Merge. All rights reserved.
-      </div>
+      <div className="km-footer__copy">© {year} K-Merge. All rights reserved.</div>
     </footer>
   );
 }

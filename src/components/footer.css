@@ -1,132 +1,157 @@
-/* ========== K-Merge Footer (Modern White–Orange) ========== */
-
-:root {
+/* ========== K-Merge Footer (Modern Minimal) ========== */
+:root{
   --km-brand: #e69525;
-  --km-text: #171717;
-  --km-muted: #666;
-  --km-border: #e9e9e9;
-  --km-bg: #ffffff;
+  --km-brand-600: #cf7f1f;
+  --km-text: #0f172a;
+  --km-muted: #667085;
+  --km-line: #eaecf0;
+  --km-card: #ffffff;
+  --km-bg: #f7f8fb;
+  --km-radius: 16px;
+  --km-shadow: 0 -8px 24px rgba(16,24,40,.06);
 }
 
-/* ==== Layout ==== */
-.km-footer {
-  background: var(--km-bg);
-  border-top: 1px solid var(--km-border);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
-  padding: 2.5rem 1.5rem 1.25rem;
+.km-footer{
+  background: var(--km-card);
+  border-top: 1px solid var(--km-line);
+  box-shadow: var(--km-shadow);
+  padding: 28px 20px 16px;
   color: var(--km-text);
-  font-family: "Inter", sans-serif;
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }
 
-.km-footer__container {
-  max-width: 1100px;
+.km-footer__container{
+  max-width: 1120px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+}
+
+/* ===== Brand ===== */
+.km-footer__brand{
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap;
+  gap: 12px;
+  min-width: 0;
 }
-
-/* ==== Brand ==== */
-.km-footer__brand {
+.km-footer__logo{
+  width: clamp(36px, 4.5vw, 48px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.06));
+}
+.km-footer__brandtext{
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  flex-direction: column;
+  line-height: 1.1;
 }
-
-
-.km-footer__logo {
-  height: clamp(4rem, 14vw, 8rem);
-  width: auto;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.06));
+.km-footer__brandtext strong{
+  font-weight: 800;
+  letter-spacing: .2px;
 }
-.km-footer__title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--km-brand);
-}
-
-/* ==== Nav ==== */
-.km-footer__nav {
-  display: flex;
-  gap: 1.25rem;
-  flex-wrap: wrap;
-}
-.km-footer__nav a {
-  color: var(--km-text);
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.15s ease, transform 0.12s ease;
-}
-.km-footer__nav a:hover {
-  color: var(--km-brand);
-  transform: translateY(-1px);
-}
-
-/* ==== Social ==== */
-.km-footer__social {
-  display: flex;
-  gap: 1rem;
-}
-.km-footer__social a {
-  font-size: 1.25rem;
-  color: var(--km-text);
-  transition: color 0.2s ease, transform 0.1s ease;
-}
-.km-footer__social a:hover {
-  color: var(--km-brand);
-  transform: scale(1.1);
-}
-
-/* ==== Copyright ==== */
-.km-footer__copy {
-  margin-top: 1.5rem;
-  text-align: center;
-  font-size: 0.875rem;
+.km-footer__brandtext span{
+  font-size: 12px;
   color: var(--km-muted);
-  border-top: 1px solid var(--km-border);
-  padding-top: 1rem;
 }
 
-/* ==== Responsive ==== */
-@media (max-width: 600px) {
-  .km-footer__container {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-  .km-footer__nav {
-    justify-content: center;
-  }
-  .km-footer__social {
-    justify-content: center;
-  }
+/* ===== Tagline ===== */
+.km-footer__tagline{
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--km-muted);
 }
 
-/* ==== Scrollbar Styling ==== */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--km-brand) transparent;
+/* ===== Social ===== */
+.km-footer__social{
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
 }
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklab, var(--km-brand) 60%, #ccc),
-    color-mix(in oklab, var(--km-brand) 80%, #aaa)
-  );
+.km-socialbtn{
+  --size: 40px;
+  width: var(--size);
+  height: var(--size);
+  display: inline-grid;
+  place-items: center;
   border-radius: 999px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+  border: 1px solid var(--km-line);
+  background: #fff;
+  color: var(--km-text);
+  font-size: 18px;
+  transition: transform .12s ease, box-shadow .15s ease, border-color .15s ease, color .15s ease;
+  outline: none;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklab, var(--km-brand) 80%, #bbb),
-    color-mix(in oklab, var(--km-brand) 100%, #888)
-  );
+.km-socialbtn:hover{
+  transform: translateY(-2px);
+  border-color: color-mix(in oklab, var(--km-brand) 50%, var(--km-line));
+  color: var(--km-brand);
+  box-shadow: 0 6px 18px rgba(230,149,37,.18);
 }
+.km-socialbtn:focus-visible{
+  box-shadow: 0 0 0 4px rgba(230,149,37,.25);
+  border-color: var(--km-brand);
+  color: var(--km-brand);
+}
+
+/* ===== Copyright ===== */
+.km-footer__copy{
+  max-width: 1120px;
+  margin: 16px auto 0;
+  padding-top: 14px;
+  border-top: 1px dashed var(--km-line);
+  text-align: center;
+  font-size: 13px;
+  color: var(--km-muted);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px){
+  .km-footer__container{
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+    row-gap: 12px;
+  }
+  .km-footer__social{
+    justify-content: center;
+  }
+  .km-footer__brand{
+    justify-content: center;
+  }
+  .km-footer__tagline{
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .km-socialbtn{ transition: none; }
+}
+
+/* (ไม่บังคับ) ถ้าต้องการ Dark Mode ให้เพิ่มคลาส .dark ที่ <html> หรือ <body> */
+.dark .km-footer{
+  background: #0b1220;
+  border-top-color: #1f2a44;
+  color: #e6e7ea;
+}
+.dark .km-footer__tagline,
+.dark .km-footer__copy{ color: #9aa4b2; }
+.dark .km-socialbtn{
+  background: #0f172a;
+  border-color: #1f2a44;
+  color: #e6e7ea;
+}
+.dark .km-socialbtn:hover{
+  border-color: color-mix(in oklab, var(--km-brand) 55%, #1f2a44);
+  box-shadow: 0 6px 18px rgba(230,149,37,.22);
+  color: var(--km-brand);
+}
+.dark .km-socialbtn:focus-visible{
+  box-shadow: 0 0 0 4px rgba(230,149,37,.35);
+  border-color: var(--km-brand);
+  color: var(--km-brand);
+}
+.dark .km-footer__brandtext strong{ color: #fff; }
+.dark .km-footer__brandtext span{ color: #9aa4b2; }

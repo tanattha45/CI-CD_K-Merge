@@ -1,192 +1,193 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  background-color: #f7d9bc;
-  font-family: "Prompt", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  box-sizing: border-box;
-}
-*, *::before, *::after { box-sizing: inherit; }
-
-/* ========== ฉากหลัง + จัดวางการ์ดกลางจอ ========== */
-.profile-page {
-  min-height: 100vh;
-  width: 100vw;
-  background: #f7d9bc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 32px 0;
-  overflow-x: hidden;
+/* ===== Tokens ===== */
+:root{
+  --brand: #f57c00;
+  --brand-600: #ef6c00;
+  --line: #eaecf0;
+  --text: #0f172a;
+  --muted: #667085;
+  --bg: #ffffff;
+  --card: #ffffff;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --shadow-lg: 0 14px 36px rgba(16,24,40,.10);
+  --shadow-md: 0 8px 22px rgba(16,24,40,.08);
 }
 
-/* การ์ดหลัก แบ่งซ้าย-ขวา */
-.profile-card {
-  width: 1200px;
+/* ===== Base ===== */
+html, body { margin:0; padding:0; height:100%; width:100%; background: var(--bg); color: var(--text);
+  font-family: "Prompt", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ===== Page ===== */
+.profile-page{
+  min-height: 100vh; width: 100%;
+  display: flex; justify-content: center; align-items: flex-start;
+  padding: clamp(20px, 3vw, 40px) 16px;
+  background: var(--bg);
+}
+
+/* ===== Shell ===== */
+.profile-card{
+  width: min(1120px, 100%);
   display: grid;
-  grid-template-columns: 380px 1fr;
-  gap: 24px;
-  background: transparent;
-  align-items: start;
+  grid-template-columns: 320px 1fr;
+  gap: 20px;
 }
 
-/* ========== ด้านซ้าย (โปรไฟล์) ========== */
-.profile-left {
-  position: relative;
-  /* ปรับส่วนสีส้มให้ยาวลงมาครอบ 'XXXXXX' ทั้งหมด */
-  background: linear-gradient(to bottom, #e57b36 0% 75%, #ffffff 75% 100%);
-  color: #fff;
-  border-radius: 20px;            /* ขอบมนขึ้น */
-  padding: 24px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
-  overflow: hidden;
+/* ===== Left (Profile) ===== */
+.profile-left{
+  position: sticky; top: 16px;
+  align-self: start;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 18px 16px 16px;
 }
 
-/* ปุ่ม Edit (ตัวอักษร) */
-.edit-btn {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  padding: 6px 12px;
-  font-size: 14px;
-  line-height: 1;
-  font-weight: 600;
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,.22);
-  transition: transform .15s ease, box-shadow .2s ease, background-color .2s ease;
+.edit-btn{
+  position: absolute; top: 10px; right: 10px;
+  padding: 6px 12px; font-size: 13px; font-weight: 700;
+  background: #111; color:#fff; border:none; border-radius: 8px; cursor:pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,.2);
+  transition: transform .12s ease, filter .12s ease;
+  text-decoration: none; display: inline-flex; align-items: center;
 }
-.edit-btn:hover {
-  transform: translateY(-1px);
-  background: #000;
-  box-shadow: 0 8px 18px rgba(0,0,0,.28);
-}
+.edit-btn:hover{ transform: translateY(-1px); filter: brightness(.95); }
 
-/* กรอบรูปโปรไฟล์ */
-.avatar-wrap {
-  width: 300px;
-  height: 300px;
-  margin: 8px auto 16px auto;
-  border-radius: 50%;
+.avatar-wrap{
+  width: 220px; height: 220px; margin: 8px auto 12px;
+  border-radius: 50%; overflow: hidden; position: relative;
+  border: 4px solid #ffe0b2;
+  box-shadow: 0 8px 18px rgba(0,0,0,.12);
   background: #fff;
-  display: grid;
-  place-items: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+}
+.avatar{ width: 100%; height: 100%; object-fit: cover; display:block; }
+.hidden-file{ display:none; }
+
+.username{
+  display:flex; justify-content:center; margin: 4px 0 10px;
+}
+.username .code{
+  font-weight: 900; letter-spacing: .4px; font-size: 20px; color: var(--text); text-align:center;
 }
 
-/* มีรูป */
-.avatar {
-  width: 100%;
-  height: 100%;
+/* Meta list */
+.meta{ display:grid; gap: 8px; margin: 10px 0 12px; }
+.meta-item{
+  display:flex; align-items:center; justify-content: space-between;
+  border: 1px solid var(--line); border-radius: 12px; padding:8px 10px;
+  background:#fff;
 }
-.avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
+.meta-item span{ font-size: 12px; color: var(--muted); }
+.meta-item strong{ font-size: 13px; color: var(--text); max-width: 60%; text-align: right; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.bio-left{
+  background: #fff7ec; border:1px solid #ffe0b2; color:#4f3b18;
+  border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.55;
 }
 
-/* ไม่มีรูป */
-.avatar-placeholder {
-  width: 92%;
-  height: 92%;
-  border-radius: 50%;
-  background:
-    radial-gradient(#f0f0f0 6px, transparent 7px) 0 0/24px 24px,
-    #ffffff;
-  display: grid;
-  place-items: center;
-  color: #666;
-  font-weight: 600;
-  font-size: 18px;
-  border: 1px dashed #d0d0d0;
+/* Socials */
+.socials{ display:flex; justify-content:center; gap: 10px; margin: 14px 0 8px; }
+.social{
+  width: 42px; height: 42px; border-radius: 12px; display:grid; place-items:center;
+  background:#fff; color:#1f1f1f; text-decoration:none;
+  border: 1px solid var(--line);
+  transition: transform .12s, box-shadow .15s, border-color .15s;
 }
-.hidden-file { display: none; }
+.social:hover{ transform: translateY(-1px); border-color:#ffd9a6; box-shadow: 0 8px 20px rgba(245,124,0,.18); }
+.social svg{ font-size: 18px; }
 
-/* ตัวอักษรใต้รูป (XXXXXX) */
-.username {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 6px;
-  margin-top: 8px;
-  font-weight: 800;
-  letter-spacing: 3px;
-  font-size: 28px;
-}
-.username .code { color: #1f1f1f; }
+.copy{ text-align:center; font-size:12px; color: var(--muted); margin-top: 6px; }
 
-/* ไอคอนโซเชียล (อยู่ส่วนพื้นขาว) */
-.socials {
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  margin: 28px 0 12px;   /* ขยับลงเล็กน้อยให้ทิ้งจาก XXXXXX */
-}
-.social {
-  width: 54px;
-  height: 54px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  background: #fff;
-  color: #1f1f1f;
-  text-decoration: none;
-  box-shadow: 0 6px 14px rgba(0,0,0,0.16);
-  transition: transform .15s ease, box-shadow .2s ease;
-}
-.social:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.22);
-}
-.social svg { font-size: 22px; }
-
-/* ลิขสิทธิ์ */
-.copy {
-  margin-top: 8px;
-  text-align: center;
-  font-size: 13px;
-  color: #1f1f1f;
-  opacity: .8;
+/* ===== Right (Content) ===== */
+.profile-right{
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 16px 16px 18px;
 }
 
-/* ========== ด้านขวา ========== */
-.profile-right {
-  padding: 18px 8px;
-  color: #1f1f1f;
-  margin-top: 100px;
-  margin-left: 50px;
+.header-block{ margin-bottom: 8px; }
+.title{ font-size: clamp(28px, 3.8vw, 40px); line-height: 1.1; margin: 0 0 6px; font-weight: 900; }
+.subtitle{ font-size: clamp(16px, 2.4vw, 20px); margin: 0 0 8px; font-weight: 700; color: var(--muted); }
+
+/* Tabs */
+.tabbar{
+  display:flex; align-items:center; gap:8px; border-bottom: 1px dashed var(--line);
+  padding-bottom: 8px; margin-bottom: 10px; flex-wrap: wrap;
 }
-.title {
-  font-size: 56px;
-  line-height: 1.05;
-  margin: 0 0 12px 0;
-  font-weight: 900;
+.tab{
+  appearance:none; border:1px solid var(--line); background:#fff; color: var(--text);
+  border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight:700; cursor:pointer;
+  transition: border-color .15s, box-shadow .15s, transform .1s;
 }
-.subtitle {
-  font-size: 34px;
-  margin: 4px 0 18px 0;
-  font-weight: 700;
+.tab:hover{ transform: translateY(-1px); border-color:#ffd9a6; }
+.tab.is-active{
+  background: #fff3e0; border-color:#ffc47a; color: var(--brand);
+  box-shadow: 0 1px 0 rgba(0,0,0,.02), 0 6px 14px rgba(245,124,0,.10) inset;
 }
-.bio {
-  max-width: 720px;
-  font-size: 18px;
-  line-height: 1.7;
-  color: #333;
+.badge{
+  margin-left: 8px; font-weight: 800; color:#fff; background: var(--brand);
+  padding: 2px 8px; border-radius: 999px; font-size: 11px;
 }
 
-/* ========== Responsive ========== */
-@media (max-width: 1100px) {
-  .profile-card {
-    width: min(94vw, 980px);
-    grid-template-columns: 1fr;
-  }
-  .profile-left { margin-bottom: 16px; }
-  .title { font-size: 44px; }
-  .subtitle { font-size: 26px; }
+/* Grid cards */
+.grid{
+  display:grid; gap: clamp(12px, 2vw, 18px);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 1024px){ .grid{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px){ .grid{ grid-template-columns: 1fr; } }
+
+.card{
+  border:1px solid var(--line); border-radius: var(--radius-md);
+  background:#fff; overflow:hidden; display:flex; flex-direction:column;
+  transition: box-shadow .18s, transform .12s, border-color .15s;
+}
+.card:hover{ transform: translateY(-2px); border-color:#ffd599; box-shadow: var(--shadow-md); }
+
+.thumb{
+  background: linear-gradient(135deg, #fff7ec 0%, #ffe5c5 100%);
+  aspect-ratio: 16/9; display:grid; place-items:center; position:relative;
+}
+.thumb-shape{
+  width: 56%; height:56%; border-radius: 16px;
+  background: conic-gradient(from 140deg, #ffffff 0%, #ffe9cc 25%, #ffd7a1 55%, #ffffff 100%);
+  filter: blur(.4px);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.04), 0 10px 28px rgba(245,124,0,.18);
+  transform: rotate(2deg);
+}
+
+.card-body{ padding: 12px 14px 14px; }
+.card-title{ margin: 2px 0 6px; font-size: 16px; font-weight: 800; }
+.card-text{ margin: 0 0 10px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+.tags{ display:flex; gap:6px; flex-wrap:wrap; }
+.tag{
+  font-size:11px; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:#fff; color: var(--text);
+}
+
+/* Empty / loading */
+.empty-state{
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-md);
+  padding: 24px 16px; text-align:center; color: var(--muted);
+  background:#fff;
+}
+.loading{ color: var(--muted); }
+
+/* ===== Motion ===== */
+@keyframes fadeInUp{ from{ opacity:0; transform: translateY(10px);} to{ opacity:1; transform: translateY(0);} }
+.fade-in-up{ animation: fadeInUp .5s ease both; }
+@media (prefers-reduced-motion: reduce){
+  .fade-in-up{ animation:none; }
+  .card, .tab, .social{ transition: none; }
+}
+
+/* ===== Responsive container tweaks ===== */
+@media (max-width: 980px){
+  .profile-card{ grid-template-columns: 1fr; }
+  .profile-left{ position: static; }
 }

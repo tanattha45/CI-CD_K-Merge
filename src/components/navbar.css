@@ -9,28 +9,26 @@
   --km-radius-lg:    0.75rem;
   --km-radius-pill:  999rem;
 
-  --km-nav-h:        4rem; /* 64px */
+  --km-nav-h:        4rem;
   --km-pad-x:        clamp(1rem, 3vw, 1.5rem);
 
-  /* Effects */
   --km-shadow-sm:    0 1px 2px rgba(0,0,0,.04);
   --km-shadow-md:    0 8px 28px rgba(0,0,0,.08);
+  --km-shadow-lg:    0 20px 50px rgba(0,0,0,.12);
   --km-focus:        color-mix(in oklab, var(--km-brand) 32%, transparent);
 }
 
-/* Optional: dark mode hook (toggle via [data-theme="dark"]) */
 :root[data-theme="dark"] {
-  --km-text:   #eaeaea;
-  --km-muted:  #b3b3b3;
-  --km-border: #2a2a2a;
-  --km-surface:#121212;
-  --km-shadow-sm: 0 1px 2px rgba(0,0,0,.5);
-  --km-shadow-md: 0 8px 28px rgba(0,0,0,.55);
+  --km-text:         #eaeaea;
+  --km-muted:        #b3b3b3;
+  --km-border:       #2a2a2a;
+  --km-surface:      #121212;
+  --km-shadow-sm:    0 1px 2px rgba(0,0,0,.5);
+  --km-shadow-md:    0 8px 28px rgba(0,0,0,.55);
+  --km-shadow-lg:    0 20px 50px rgba(0,0,0,.8);
 }
 
-
-
-/* ---- Layout ---- */
+/* ---- Desktop Layout ---- */
 .km-nav {
   height: var(--km-nav-h);
   padding: 0 var(--km-pad-x);
@@ -43,11 +41,11 @@
   position: sticky;
   top: 0;
   z-index: 50;
-
-  /* soft glass feel on scroll */
-  backdrop-filter: saturate(120%) blur(6px);
-  -webkit-backdrop-filter: saturate(120%) blur(6px);
+  backdrop-filter: saturate(120%) blur(10px);
+  -webkit-backdrop-filter: saturate(120%) blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .km-nav__left,
 .km-nav__right {
   display: flex;
@@ -55,25 +53,30 @@
   gap: 0.75rem;
 }
 
-/* ---- Logo (fixed clamp order) ---- */
+/* ---- Logo ---- */
 .km-logo {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
   line-height: 1;
+  position: relative;
 }
+
 .km-logo-img {
-  /* ~32px → ~44px as viewport grows */
   height: clamp(8rem, 18vw, 10rem);
   width: auto;
   object-fit: contain;
   display: block;
-  transition: transform .12s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease;
 }
-.km-logo:hover .km-logo-img,
-.km-logo:focus-visible .km-logo-img { transform: translateY(-1px); }
 
-/* ---- Button (neutral by default) ---- */
+.km-logo:hover .km-logo-img,
+.km-logo:focus-visible .km-logo-img {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+/* ---- Button ---- */
 .km-btn {
   --btn-h: 2.625rem;
   --btn-pad-x: 1rem;
@@ -91,96 +94,185 @@
   border: 1px solid transparent;
   background: transparent;
   color: var(--km-text);
-  transition: background-color .15s ease, box-shadow .15s ease, transform .1s ease, border-color .15s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
+
+.km-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--km-brand) 10%, transparent);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.km-btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
 .km-btn:focus-visible {
   outline: 3px solid var(--km-focus);
   outline-offset: 2px;
 }
 
-/* Minimal luxury (Sign In) */
 .km-btn--minimal {
   border-color: var(--km-border);
   background: var(--km-surface);
   box-shadow: var(--km-shadow-sm);
 }
+
 .km-btn--minimal:hover {
   background: color-mix(in oklab, var(--km-surface) 85%, var(--km-border));
   box-shadow: var(--km-shadow-md);
+  transform: translateY(-2px);
 }
-.km-btn--minimal:active { transform: translateY(1px); }
 
-/* Brand pill (future use) */
-.km-btn--brand {
-  background: var(--km-brand);
-  color: #fff;
+.km-btn--minimal:active {
+  transform: translateY(1px);
 }
-.km-btn--brand:hover { filter: brightness(.97); }
 
-/* ---- Profile / Avatar ---- */
-.km-profile { position: relative; }
-
+/* ---- Avatar ---- */
 .km-avatar {
   --size: 2.25rem;
   width: var(--size);
   height: var(--size);
   border-radius: var(--km-radius-pill);
-  border: 1px solid var(--km-border);
-  background: #faf5ef;
+  border: 2px solid var(--km-border);
+  background: linear-gradient(135deg, #faf5ef 0%, #f5ece0 100%);
   color: #8a4d00;
   font-weight: 800;
+  font-size: 0.9375rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: transform .12s ease, box-shadow .12s ease, outline-color .15s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
 }
+
+.km-avatar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--km-radius-pill);
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.km-avatar:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--km-shadow-lg);
+  border-color: var(--km-brand);
+}
+
+.km-avatar:hover::before {
+  opacity: 1;
+}
+
+.km-avatar:focus-visible {
+  outline: 3px solid var(--km-focus);
+  outline-offset: 2px;
+}
+
+.km-avatar--sm {
+  --size: 1.75rem;
+  font-size: 0.75rem;
+}
+
+.km-avatar__initial {
+  position: relative;
+  z-index: 1;
+}
+
 :root[data-theme="dark"] .km-avatar {
-  background: #1e1a15; color: #ffd8a8; border-color: var(--km-border);
+  background: linear-gradient(135deg, #1e1a15 0%, #2d2622 100%);
+  color: #ffd8a8;
+  border-color: var(--km-border);
 }
-.km-avatar:hover { transform: translateY(-1px); box-shadow: var(--km-shadow-md); }
-.km-avatar:focus-visible { outline: 3px solid var(--km-focus); outline-offset: 2px; }
-.km-avatar--sm { --size: 1.75rem; font-size: 0.75rem; }
+
+/* ---- Profile ---- */
+.km-profile {
+  position: relative;
+}
 
 /* ---- Dropdown ---- */
 .km-dropdown {
   position: absolute;
   right: 0;
-  top: calc(var(--size, 2.25rem) + 0.5rem);
-  width: 14rem;
+  top: calc(var(--size, 2.25rem) + 0.75rem);
+  width: 15rem;
   background: var(--km-surface);
   border: 1px solid var(--km-border);
   border-radius: var(--km-radius-lg);
-  box-shadow: var(--km-shadow-md);
-  padding: 0.5rem;
-  animation: km-pop .12s ease-out;
+  box-shadow: var(--km-shadow-lg);
+  padding: 0.75rem;
+  animation: km-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1000;
 }
+
 @keyframes km-pop {
-  from { transform: translateY(-4px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
+  from {
+    transform: translateY(-12px) scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
+
 .km-dropdown::before {
   content: "";
   position: absolute;
-  top: -6px;
-  right: 1rem;
-  width: 10px; height: 10px;
+  top: -8px;
+  right: 1.25rem;
+  width: 12px;
+  height: 12px;
   background: var(--km-surface);
   border-left: 1px solid var(--km-border);
   border-top: 1px solid var(--km-border);
   transform: rotate(45deg);
+  box-shadow: -2px -2px 4px rgba(0,0,0,0.02);
 }
 
 .km-dropdown__header {
   display: flex;
-  gap: 0.625rem;
+  gap: 0.75rem;
   align-items: center;
-  padding: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: color-mix(in oklab, var(--km-brand) 3%, transparent);
 }
-.km-user__name { font-weight: 700; font-size: 0.9375rem; }
-.km-user__sub  { font-size: 0.75rem; color: var(--km-muted); }
+
+.km-user__name {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  background: linear-gradient(135deg, var(--km-brand), #d97a1a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.km-user__sub {
+  font-size: 0.8125rem;
+  color: var(--km-muted);
+  margin-top: 0.25rem;
+}
 
 .km-dropdown__sep {
-  height: 1px; background: var(--km-border); margin: 0.375rem 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--km-border), transparent);
+  margin: 0.5rem 0;
 }
 
 .km-dropdown__item {
@@ -188,58 +280,223 @@
   text-align: left;
   background: transparent;
   border: 0;
-  padding: 0.5rem 0.625rem;
-  border-radius: 0.5rem;
-  display: block;
+  padding: 0.75rem 0.875rem;
+  border-radius: 0.625rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   color: var(--km-text);
   text-decoration: none;
   cursor: pointer;
   font-size: 0.9375rem;
-  transition: background-color .12s ease, transform .08s ease;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
-.km-dropdown__item:hover { background: color-mix(in oklab, var(--km-brand) 6%, transparent); }
-.km-dropdown__item:active { transform: translateY(1px); }
-.km-dropdown__item:focus-visible { outline: 2px solid var(--km-focus); outline-offset: 2px; }
 
-/* ---- Responsive tweaks ---- */
+.km-dropdown__item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--km-brand) 0%, #d97a1a 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.km-dropdown__item:hover {
+  background: color-mix(in oklab, var(--km-brand) 8%, transparent);
+  transform: translateX(4px);
+}
+
+.km-dropdown__item:active {
+  transform: translateX(2px) translateY(1px);
+}
+
+.km-dropdown__item:focus-visible {
+  outline: 2px solid var(--km-focus);
+  outline-offset: -1px;
+}
+
+.km-dropdown__icon {
+  font-size: 1rem;
+  opacity: 0.8;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.km-dropdown__item:hover .km-dropdown__icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.km-dropdown__item--logout {
+  color: #d97a1a;
+  margin-top: 0.25rem;
+}
+
+.km-dropdown__item--logout:hover {
+  background: color-mix(in oklab, #d97a1a 12%, transparent);
+}
+
+/* ---- Nav Overlay (untuk mobile) ---- */
+.km-nav-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0);
+  z-index: 40;
+  animation: fade-in 0.2s ease;
+}
+
+@keyframes fade-in {
+  from { background: rgba(0, 0, 0, 0); }
+  to { background: rgba(0, 0, 0, 0.2); }
+}
+
+/* ---- Mobile & Tablet Layout ---- */
+@media (max-width: 768px) {
+  :root {
+    --km-nav-h: 3.5rem;
+  }
+
+  .km-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    border-bottom: 0;
+    border-top: 1px solid var(--km-border);
+    padding: 0.5rem var(--km-pad-x);
+    z-index: 100;
+  }
+
+  .km-nav__left {
+    display: none;
+  }
+
+  .km-nav__right {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .km-logo-img {
+    height: clamp(7rem, 15vw, 8rem);
+  }
+
+  .km-btn {
+    font-size: 0.875rem;
+    --btn-h: 2.375rem;
+    --btn-pad-x: 0.875rem;
+  }
+
+  .km-dropdown {
+    position: fixed;
+    bottom: calc(var(--km-nav-h) + 0.75rem);
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90vw, 16rem);
+    top: auto;
+    animation: km-pop-mobile 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes km-pop-mobile {
+    from {
+      transform: translateX(-50%) translateY(16px) scale(0.9);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(-50%) translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+
+  .km-dropdown::before {
+    top: auto;
+    bottom: -8px;
+    border-top: 1px solid var(--km-border);
+    border-left: 1px solid var(--km-border);
+    border-right: 0;
+    border-bottom: 0;
+  }
+
+  .km-nav-overlay {
+    display: block;
+  }
+}
+
 @media (max-width: 480px) {
-  :root { --km-nav-h: 3.75rem; }
-  .km-btn { font-size: 0.875rem; }
-  .km-dropdown { width: 12.5rem; }
+  :root {
+    --km-pad-x: 0.75rem;
+  }
+
+  .km-dropdown {
+    width: min(95vw, 14rem);
+  }
+
+  .km-dropdown__header {
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .km-user__name {
+    font-size: 0.875rem;
+  }
+
+  .km-user__sub {
+    font-size: 0.75rem;
+  }
+
+  .km-dropdown__item {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+  }
 }
 
-/* ---- Reduced motion ---- */
+/* ---- Reduced Motion ---- */
 @media (prefers-reduced-motion: reduce) {
-  .km-logo-img, .km-avatar, .km-btn { transition: none; }
-  .km-dropdown { animation: none; }
-  .km-nav { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .km-nav {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
 }
 
-/* ========= Elegant Scrollbar (WebKit + Firefox) ========= */
-
-/* Chrome / Edge / Safari */
+/* ========= Elegant Scrollbar ========= */
 * {
-  scrollbar-width: thin; /* Firefox fallback first */
-  scrollbar-color: color-mix(in oklab, var(--km-brand) 45%, #ff6a00b1) transparent; /* Firefox thumb/track */
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--km-brand) 45%, #ff6a00b1) transparent;
 }
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(
     to bottom,
     color-mix(in oklab, var(--km-brand) 40%, #bbb),
     color-mix(in oklab, var(--km-brand) 70%, #999)
   );
-  border: 2px solid transparent;         /* creates the gap look */
+  border: 2px solid transparent;
   background-clip: padding-box;
   border-radius: 999px;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,.25);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(
     to bottom,
@@ -247,12 +504,13 @@
     color-mix(in oklab, var(--km-brand) 85%, #888)
   );
 }
+
 :root[data-theme="dark"] ::-webkit-scrollbar-thumb {
   box-shadow: inset 0 0 0 1px rgba(0,0,0,.35);
 }
 
-/* Optional: only show scrollbar when scrolling on desktop */
 @media (hover: hover) and (pointer: fine) {
-  ::-webkit-scrollbar-thumb { opacity: .8; }
-  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    opacity: 0.8;
+  }
 }
