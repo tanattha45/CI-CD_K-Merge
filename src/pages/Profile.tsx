@@ -1,5 +1,5 @@
 // src/pages/Profile.tsx
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import "./profile.css";
@@ -9,10 +9,11 @@ import { useAuth } from "../contexts/AuthContext";
 type TabKey = "saved" | "posts";
 
 type Card = {
-  id: number;
+  id: string | number;
   title: string;
   excerpt: string;
   tags: string[];
+  thumb?: string | null;
 };
 
 export default function Profile() {
@@ -33,17 +34,24 @@ export default function Profile() {
       })),
     []
   );
-  const posts = useMemo<Card[]>(
-    () =>
-      Array.from({ length: 5 }).map((_, i) => ({
-        id: i + 101,
-        title: `My post #${i + 1}`,
-        excerpt:
-          "This is one of your own posts. Keep sharing your projects and ideas.",
-        tags: i % 2 ? ["Product"] : ["Prototype", "UX"],
-      })),
-    []
-  );
+  const [posts, setPosts] = useState<Card[]>([]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch('/works/my', { credentials: 'include' });
+        if (!res.ok) return; // if not authenticated, leave empty
+        const works = await res.json();
+        const mapped: Card[] = (works || []).map((w: any) => ({
+          id: w.workId || w.id,
+          title: w.title,
+          excerpt: w.description || '',
+          tags: (w.tags || []).map((t: any) => t.name),
+          thumb: w.thumbnail || null,
+        }));
+        setPosts(mapped);
+      } catch {}
+    })();
+  }, []);
 
   const onPickImage = () => fileRef.current?.click();
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,7 +201,11 @@ export default function Profile() {
                     style={{ animationDelay: `${Math.min(i, 6) * 60}ms` }}
                   >
                     <div className="thumb" aria-hidden="true">
-                      <div className="thumb-shape" />
+                      {item.thumb ? (
+                        <img src={item.thumb} alt="thumbnail" style={{width:'100%',height:'100%',objectFit:'cover', borderRadius: 'inherit'}} />
+                      ) : (
+                        <div className="thumb-shape" />
+                      )}
                     </div>
                     <div className="card-body">
                       <h3 className="card-title">{item.title}</h3>

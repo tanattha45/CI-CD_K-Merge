@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import "./App.css";
@@ -6,50 +7,41 @@ import "./App.css";
 type Chip = string;
 
 type Card = {
-  id: number;
+  id: string | number;
   title: string;
   body: string;
   tags: Chip[];
+  thumb?: string | null;
 };
 
-// ----- Tag pool (ตัวอย่าง) -----
-const ALL_TAGS: Chip[] = [
-  "Prototyping",
-  "Sketch",
-  "Product",
-  "Figma",
-  "UI kit",
-  "Usability",
-  "Wireframing",
-  "Leadership",
-  "UI design",
-  "ReactJS",
-  "Photoshop",
-];
-
 export default function App() {
-  // ===== Mock data (มี tags เพื่อนำไปกรอง) =====
-  const baseCards: Card[] = useMemo(() => {
-    // กระจายแท็กแบบง่าย ๆ เพื่อเดโม่
-    const tagGroups: Chip[][] = [
-      ["Figma", "UI kit", "Prototyping"],
-      ["Sketch", "UI design", "Wireframing"],
-      ["ReactJS", "Product"],
-      ["Usability", "UI design"],
-      ["Figma", "Usability", "Product"],
-      ["ReactJS", "UI kit"],
-      ["Leadership", "Product"],
-      ["Photoshop", "UI design"],
-      ["Wireframing", "Prototyping"],
-    ];
-    return Array.from({ length: 9 }).map((_, i) => ({
-      id: i + 1,
-      title: `Project #${i + 1}`,
-      body:
-        "Short description for student work. Add teasers, notes, or a quick overview of the project.",
-      tags: tagGroups[i % tagGroups.length],
-    }));
+  const navigate = useNavigate();
+  const [realCards, setRealCards] = useState<Card[]>([]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch('/works', { credentials: 'include' });
+        if (!res.ok) throw new Error(await res.text());
+        const works = await res.json();
+        const cards: Card[] = (works || []).map((w: any) => ({
+          id: w.workId || w.id,
+          title: w.title,
+          body: w.description || '',
+          tags: (w.tags || []).map((t: any) => t.name),
+          thumb: w.thumbnail || null,
+        }));
+        setRealCards(cards);
+      } catch (e) {
+        // ignore errors in splash page
+      }
+    })();
   }, []);
+  // Dynamic tag pool from loaded works
+  const TAGS: Chip[] = useMemo(() => {
+    const set = new Set<string>();
+    realCards.forEach((c) => c.tags.forEach((t) => set.add(t)));
+    return Array.from(set).sort();
+  }, [realCards]);
 
   // ===== UI state =====
   const [q, setQ] = useState("");
@@ -70,7 +62,7 @@ export default function App() {
   // ===== Filter + Search + Sort =====
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase();
-    let data = baseCards;
+    let data = realCards;
 
     // search
     if (query) {
@@ -94,7 +86,7 @@ export default function App() {
     if (sort === "featured") data = data.slice(0, 6);
 
     return data;
-  }, [q, selected, baseCards, sort]);
+  }, [q, selected, realCards, sort]);
 
   return (
     <>
@@ -181,7 +173,7 @@ export default function App() {
 
           {/* Chips (compact, selectable) */}
           <div className="km-chips km-chips--compact" role="group" aria-label="Active filters">
-            {ALL_TAGS.map((tag) => {
+            {TAGS.map((tag) => {
               const active = selected.has(tag);
               return (
                 <button
@@ -211,9 +203,17 @@ export default function App() {
                   key={c.id}
                   className="km-card fade-in-up"
                   style={{ animationDelay: `${Math.min(idx, 6) * 60}ms` }}
+                  onClick={() => navigate(`/works/${c.id}`)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && navigate(`/works/${c.id}`)}
                 >
                   <div className="km-card__thumb" aria-hidden="true">
-                    <div className="km-thumb__shape" />
+                    {c.thumb ? (
+                      <img src={c.thumb} alt="thumbnail" style={{width:'100%',height:'100%',objectFit:'cover'}} />
+                    ) : (
+                      <div className="km-thumb__shape" />
+                    )}
                   </div>
                   <div className="km-card__body">
                     <h4 className="km-card__title">{c.title}</h4>
@@ -277,3 +277,7 @@ export default function App() {
     </>
   );
 }
+
+
+
+

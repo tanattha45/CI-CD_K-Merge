@@ -8,6 +8,8 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import VerifyEmail from "./pages/VerifyEmail";
 import EditProfile from "./pages/Editprofile";
+import CreateWork from "./pages/CreateWork";
+import WorkView from "./pages/WorkView";
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./index.css";
@@ -22,8 +24,10 @@ const router = createBrowserRouter([
     children: [
       { path: "/profile", element: <Profile /> },
       { path: "/edit-profile", element: <EditProfile /> },
+      { path: "/works/new", element: <CreateWork /> },
     ]
   },
+  { path: "/works/:id", element: <WorkView /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

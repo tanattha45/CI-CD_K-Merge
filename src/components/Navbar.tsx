@@ -96,6 +96,10 @@ export default function Navbar() {
 
                   <div className="km-dropdown__sep" />
 
+                  <Link to="/works/new" className="km-dropdown__item" role="menuitem">
+                    Create new post
+                  </Link>
+
                   <Link to="/profile" className="km-dropdown__item" role="menuitem">
                     <FaUser className="km-dropdown__icon-fa" />
                     Profile
