@@ -1,11 +1,9 @@
-// src/pages/Profile.tsx
-import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import "./profile.css";
 import Navbar from "../components/Navbar";
 import { useAuth } from "../contexts/AuthContext";
-
 type TabKey = "saved" | "posts";
 
 type Card = {
@@ -21,8 +19,9 @@ export default function Profile() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [tab, setTab] = useState<TabKey>("saved");
+  const [profile, setProfile] = useState<any | null>(null);
 
-  // ---- mock content for demo (เชื่อม backend ภายหลัง) ----
+  // ---- mock content for demo (à¹€à¸Šà¸·à¹ˆà¸­à¸¡ backend à¸ à¸²à¸¢à¸«à¸¥à¸±à¸‡) ----
   const saved = useMemo<Card[]>(
     () =>
       Array.from({ length: 6 }).map((_, i) => ({
@@ -49,6 +48,18 @@ export default function Profile() {
           thumb: w.thumbnail || null,
         }));
         setPosts(mapped);
+      } catch {}
+    })();
+  }, []);
+
+  // Load Profile row for display
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetch('/auth/profile', { credentials: 'include' });
+        if (res.ok) {
+          setProfile(await res.json());
+        }
       } catch {}
     })();
   }, []);
@@ -88,6 +99,7 @@ export default function Profile() {
   }
 
   const displayName =
+    (profile && profile.displayName) ||
     user.user_metadata?.full_name ||
     user.user_metadata?.name ||
     user.email ||
@@ -95,18 +107,19 @@ export default function Profile() {
 
   const avatarUrl =
     avatarPreview ||
-    user.user_metadata?.picture ||
-    `https://ui-avatars.com/api/?name=${encodeURIComponent(
-      displayName
-    )}&background=F59E0B&color=fff`;
+    // Profile table (handle different column casings just in case)
+    (profile && (profile.avatarUrl || profile.avatarurl || profile.avatar_url)) ||
+    // Metadata fallbacks
+    (user.user_metadata && (user.user_metadata.avatar_url || user.user_metadata.picture)) ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=F59E0B&color=fff`;
 
   const locationText =
     user.user_metadata?.location || "KMUTT, Thailand";
 
   const bioText =
+    (profile && profile.bio) ||
     user.user_metadata?.bio ||
-    "Tell people who you are, what you’re building, and what you’re excited about.";
-
+    "Tell people who you are, what you are building, and what you are excited about.";
   const activeList = tab === "saved" ? saved : posts;
 
   return (
@@ -128,7 +141,17 @@ export default function Profile() {
               onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && onPickImage()}
               aria-label="Upload new avatar"
             >
-              <img className="avatar" src={avatarUrl} alt={`${displayName} avatar`} />
+              <img
+                className="avatar"
+                src={avatarUrl}
+                alt={`${displayName} avatar`}
+                onError={(e) => {
+                  const fallback = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=F59E0B&color=fff`;
+                  if (e.currentTarget.src !== fallback) {
+                    e.currentTarget.src = fallback;
+                  }
+                }}
+              />
               <input
                 ref={fileRef}
                 type="file"
@@ -146,7 +169,7 @@ export default function Profile() {
               <div className="meta-item"><span>Location</span><strong>{locationText}</strong></div>
               <div className="meta-item">
                 <span>Email</span>
-                <strong title={user.email || ""}>{user.email || "—"}</strong>
+                <strong title={user.email || ""}>{user.email || "â€”"}</strong>
               </div>
               <div className="meta-item"><span>Member since</span><strong>{new Date(user.created_at).toLocaleDateString()}</strong></div>
             </div>
@@ -161,7 +184,7 @@ export default function Profile() {
               <a href="#" className="social" aria-label="linkedin"><FaLinkedinIn /></a>
             </div>
 
-            <div className="copy">© {new Date().getFullYear()} All rights reserved</div>
+            <div className="copy">Â© {new Date().getFullYear()} All rights reserved</div>
           </aside>
 
           {/* ===== Right: Content (Saved / Posts) ===== */}
