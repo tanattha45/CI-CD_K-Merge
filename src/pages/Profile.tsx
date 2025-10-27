@@ -21,7 +21,6 @@ export default function Profile() {
   const [tab, setTab] = useState<TabKey>("saved");
   const [profile, setProfile] = useState<any | null>(null);
 
-  // ---- mock content for demo (à¹€à¸Šà¸·à¹ˆà¸­à¸¡ backend à¸ à¸²à¸¢à¸«à¸¥à¸±à¸‡) ----
   const saved = useMemo<Card[]>(
     () =>
       Array.from({ length: 6 }).map((_, i) => ({
