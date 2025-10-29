@@ -12,6 +12,7 @@ type Card = {
   excerpt: string;
   tags: string[];
   thumb?: string | null;
+  created_at?: string;
 };
 
 export default function Profile() {
