@@ -15,12 +15,14 @@ type Card = {
   created_at?: string;
 };
 
+
 export default function Profile() {
   const { user, loading } = useAuth();
   const fileRef = useRef<HTMLInputElement>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [tab, setTab] = useState<TabKey>("saved");
   const [profile, setProfile] = useState<any | null>(null);
+  const createdAtStr = user?.created_at;
 
   const saved = useMemo<Card[]>(
     () =>
@@ -171,7 +173,7 @@ export default function Profile() {
                 <span>Email</span>
                 <strong title={user.email || ""}>{user.email || "â€”"}</strong>
               </div>
-              <div className="meta-item"><span>Member since</span><strong>{new Date(user.created_at).toLocaleDateString()}</strong></div>
+              <div className="meta-item"><span>Member since</span><strong>{createdAtStr ? new Date(createdAtStr).toLocaleDateString() : '-'}</strong></div>
             </div>
 
             <div className="bio-left">

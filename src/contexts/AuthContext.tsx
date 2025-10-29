@@ -7,6 +7,7 @@ interface User {
   id: string;
   email?: string;
   user_metadata?: { [key: string]: any };
+  created_at?: string;
 }
 
 // Interface for the context's value
